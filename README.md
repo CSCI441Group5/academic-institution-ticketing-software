@@ -1,4 +1,4 @@
-# Automated School Ticketing System (2026S_CSCI441_VB Group 5)
+# Academic Institution Ticketing Software (2026S_CSCI441_VB Group 5)
 
 ## Project Overview
 
