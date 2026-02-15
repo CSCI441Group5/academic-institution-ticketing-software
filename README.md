@@ -19,6 +19,6 @@ The system is being developed via an agile-based design.
 - Search feature for tickets
 
 ## Technology
-- Frontend: Python
+- Frontend: Python/HTML & CSS
 - Backend: Python/SQL
-- Database: To be evaluated
+- Database: SQL
