@@ -36,7 +36,57 @@ git clone https://github.com/CSCI441Group5/academic-institution-ticketing-softwa
 cd academic-institution-ticketing-software
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Run setup script
+
+**macOS / Linux**
+
+```
+./setup.sh
+```
+
+**Windows (PowerShell)**
+
+```
+.\setup.ps1
+```
+
+This creates `.venv` (if missing) and installs dependencies.
+
+### 3. Run the application
+
+**macOS / Linux**
+
+```
+./run.sh
+```
+
+**Windows (PowerShell)**
+
+```
+.\run.ps1
+```
+
+**Manual run**
+
+```
+python run.py
+```
+
+If outside the virtual environment:
+
+```
+python3 run.py
+```
+
+### 4. Open in your browser
+
+```
+http://127.0.0.1:5000
+```
+
+## Manual setup (alternative)
+
+### 1. Create and activate a virtual environment
 
 **macOS / Linux**
 
@@ -52,13 +102,13 @@ python -m venv .venv
 .venv\Scripts\Activate
 ```
 
-### 3. Install dependencies
+### 2. Install dependencies
 
 ```
 pip install -r requirements.txt
 ```
 
-### 4. Run the application
+### 3. Run the application
 
 ```
 python run.py
@@ -70,7 +120,7 @@ If outside the virtual environment:
 python3 run.py
 ```
 
-### 5. Open in your browser
+### 4. Open in your browser
 
 ```
 http://127.0.0.1:5000
@@ -89,3 +139,13 @@ python3 run.py
 ```
 source .venv/bin/activate
 ```
+
+## Quick Start
+
+- First-time setup (or when dependencies change):
+    - macOS / Linux: `./setup.sh`
+    - Windows (PowerShell): `.\setup.ps1`
+
+- Run the app:
+    - macOS / Linux: `./run.sh`
+    - Windows (PowerShell): `.\run.ps1`
