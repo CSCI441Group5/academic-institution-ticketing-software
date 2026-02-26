@@ -1,0 +1,61 @@
+<!-- Base html file for ticket submission UI -->
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Submit Ticket - Automated School Ticketing System</title>
+        <!-- Loads the CSS file from Flask’s static folder -->
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='styles.css') }}"
+        />
+    </head>
+    <body>
+        <section>
+            <h1>Submit Ticket</h1>
+
+            {% if success %}
+            <!-- Show a simple confirmation after successful insert -->
+            <p>Ticket created successfully (ID: {{ ticket_id }}).</p>
+            {% endif %} {% if error %}
+            <!-- Show required-field validation message -->
+            <p>{{ error }}</p>
+            {% endif %}
+
+            <!-- Submit form to /tickets/new using POST -->
+            <form action="{{ url_for('auth.new_ticket') }}" method="POST">
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="IT">IT</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Academic Support">Academic Support</option>
+                </select>
+                <br />
+                <label for="description">Description:</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    required
+                ></textarea>
+                <br />
+                <label for="attachment">Attachment (optional):</label>
+                <input
+                    type="text"
+                    id="attachment"
+                    name="attachment"
+                    placeholder="File name or link"
+                />
+                <br />
+                <button type="submit" id="login-button">Create Ticket</button>
+            </form>
+
+            <p>
+                <a href="{{ url_for('auth.dashboard') }}">Back to Dashboard</a>
+            </p>
+        </section>
+    </body>
+</html>
