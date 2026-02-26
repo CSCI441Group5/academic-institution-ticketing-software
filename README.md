@@ -7,6 +7,18 @@ to allow for faculty/staff to submit support tickets and to allow for tech manag
 
 The system is being developed via an agile-based design.
 
+## Quick Start
+
+First-time setup (or when dependencies change):
+
+- macOS / Linux: `./setup.sh`
+- Windows (PowerShell): `.\setup.ps1`
+
+Run the app:
+
+- macOS / Linux: `./run.sh`
+- Windows (PowerShell): `.\run.ps1`
+
 ## Current Features
 
 - User authentication via university login
@@ -64,18 +76,6 @@ This creates `.venv` (if missing) and installs dependencies.
 
 ```
 .\run.ps1
-```
-
-**Manual run**
-
-```
-python run.py
-```
-
-If outside the virtual environment:
-
-```
-python3 run.py
 ```
 
 ### 4. Open in your browser
@@ -139,13 +139,3 @@ python3 run.py
 ```
 source .venv/bin/activate
 ```
-
-## Quick Start
-
-- First-time setup (or when dependencies change):
-    - macOS / Linux: `./setup.sh`
-    - Windows (PowerShell): `.\setup.ps1`
-
-- Run the app:
-    - macOS / Linux: `./run.sh`
-    - Windows (PowerShell): `.\run.ps1`
