@@ -128,10 +128,16 @@ http://127.0.0.1:5000
 
 ## Troubleshooting
 
+**“command not found: run.sh”**
+
+```
+./run.sh
+```
+
 **“command not found: python”**
 
 ```
-python3 run.py
+./setup.sh
 ```
 
 **Flask not found**

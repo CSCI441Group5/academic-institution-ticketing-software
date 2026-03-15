@@ -12,7 +12,7 @@ fi
 
 # Install project dependencies into the local virtual environment
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
 
 echo "Setup complete. Run the app with: ./run.sh"

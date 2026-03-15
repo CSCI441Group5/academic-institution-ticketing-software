@@ -12,4 +12,4 @@ fi
 
 # Activate the virtual environment and run the app
 source .venv/bin/activate
-python run.py
+.venv/bin/python run.py
