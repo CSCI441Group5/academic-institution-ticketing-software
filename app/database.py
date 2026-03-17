@@ -26,6 +26,18 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
         """
     )
 
+    # Create mock university accounts table
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS MockUniversityAccount (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,      -- unique account ID
+            email TEXT NOT NULL UNIQUE,                -- university email
+            password_hash TEXT NOT NULL,
+            full_name TEXT NOT NULL
+        )
+        """
+    )
+
     connection.commit()
 
 
@@ -74,6 +86,52 @@ def save_ticket(ticket_data):
         return cursor.lastrowid
     finally:
         # Always close database connection
+        connection.close()
+
+
+def get_mock_university_account_by_email(email):
+    """Retrieve mock university account by email address."""
+
+    connection = connect_db()
+
+    try:
+        # Match email case-insensitively so submitted form values are flexible
+        cursor = connection.execute(
+            """
+            SELECT id, email, password_hash, full_name
+            FROM MockUniversityAccount
+            WHERE lower(email) = lower(?)
+            """,
+            (email.strip(),),
+        )
+
+        return cursor.fetchone()
+    finally:
+        connection.close()
+
+
+def save_mock_university_account(account_data):
+    """Save mock university account if it does not already exist."""
+
+    connection = connect_db()
+
+    try:
+        # Insert account only when the email does not already exist
+        connection.execute(
+            """
+            INSERT OR IGNORE INTO MockUniversityAccount
+            (email, password_hash, full_name)
+            VALUES (?, ?, ?)
+            """,
+            (
+                account_data["email"],
+                account_data["password_hash"],
+                account_data["full_name"],
+            ),
+        )
+
+        connection.commit()
+    finally:
         connection.close()
 
 
