@@ -1,6 +1,7 @@
 # URL routes
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, session, url_for
+import app.auth.service
 import app.database
 import app.tickets
 
@@ -25,8 +26,29 @@ def university_login():
 
 @auth_bp.post("/auth/login")
 def login_submit():
-    # Placeholder sign-in route until a real identity provider flow is added
-    # Redirect to dashboard so the UI can be tested without authentication
+    # Authenticate against the mock university account table
+    # Pull submitted credentials from the university sign in form
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+
+    account, error = app.auth.service.authenticate_mock_university_account(
+        email, password
+    )
+
+    # Re-render the login page with an error if credentials are invalid
+    if error:
+        # Keep the current page and show the validation error
+        return render_template(
+            "university_login.html",
+            error=error,
+            email=email,
+        ), 401
+
+    # Store a minimal mock user session so the sign-in can be tracked later
+    session["mock_university_account_id"] = account.id
+    session["mock_university_email"] = account.email
+    session["mock_university_full_name"] = account.full_name
+
     return redirect(url_for("auth.dashboard"))
 
 
