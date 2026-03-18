@@ -100,6 +100,18 @@ body.login-page {
     font-weight: 600;
 }
 
+/* show sign in errors without changing the card layout */
+.login-error {
+    margin: 1rem 0 0;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #e0b3b3;
+    border-radius: 3px;
+    background-color: #fff4f4;
+    color: #8c2323;
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
 .login-form {
     display: grid;
     gap: 0.85rem;

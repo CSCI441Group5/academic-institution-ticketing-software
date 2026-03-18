@@ -41,18 +41,25 @@
                         (Example: @parkfield.edu, @mail.parkfield.edu)
                     </p>
 
-                    <!-- Submit to a placeholder route until real auth is added -->
+                    {% if error %}
+                    <!-- Show sign-in error without changing the overall layout -->
+                    <p class="login-error">{{ error }}</p>
+                    {% endif %}
+
+                    <!-- Submit to the mock university authentication route -->
                     <form
                         action="{{ url_for('auth.login_submit') }}"
                         method="POST"
                         class="login-form"
                     >
                         <label for="email">Parkfield email address</label>
+                        <!-- Keep the submitted email after a failed sign in -->
                         <input
                             type="email"
                             id="email"
                             name="email"
                             placeholder="name@parkfield.edu"
+                            value="{{ email|default('', true) }}"
                             autocomplete="username"
                             required
                         />
