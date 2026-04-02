@@ -118,9 +118,10 @@ def save_mock_university_account(account_data):
 
     try:
         # Insert account only when the email does not already exist
+        # Using IGNORE for safer startup seeding
         connection.execute(
             """
-            INSERT OR REPLACE INTO MockUniversityAccount
+            INSERT OR IGNORE INTO MockUniversityAccount
             (email, password_hash, full_name, role)
             VALUES (?, ?, ?, ?)
             """,

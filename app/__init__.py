@@ -13,6 +13,11 @@ def create_app():
      # If it’s not set, it can cause issues, so use a temporary fallback
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "replace_later")
 
+    from app.seed_accounts import seed_mock_university_accounts
+
+    with app.app_context():
+        seed_mock_university_accounts()
+
     from app.auth.routes import auth_bp
     # Register blueprint with the Flask app so routes defined in auth_bp become active
     app.register_blueprint(auth_bp)
