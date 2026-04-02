@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Dashboard - Automated School Ticketing System</title>
+        <title>Staff Dashboard - Automated School Ticketing System</title>
         <!-- Loads the CSS file from Flask’s static folder -->
         <link
             rel="stylesheet"
@@ -10,13 +10,7 @@
         />
     </head>
     <body>
-        <h1>My Tickets</h1>
-        <p>
-            <a href="{{ url_for('auth.new_ticket') }}">
-                <button type="button">Create New Ticket</button>
-            </a>
-        </p>
-
+        <h1>User Tickets</h1>
         <form method="get" id="filters">
             <p>Filter By:</p>
             <div>

@@ -50,11 +50,31 @@ def login_submit():
     session["user_full_name"] = account.full_name
     session["user_role"] = account.role
 
-    return redirect(url_for("auth.dashboard"))
-
+    if(session["user_role"] == "student"):
+        return redirect(url_for("auth.dashboard"))
+    else:
+        return redirect(url_for("auth.staff_dashboard"))
 
 @auth_bp.route("/dashboard")
 def dashboard():
+    session_data = get_ticket_data()
+    return render_template("dashboard.html", tickets=session_data[0],
+                           status_filter=session_data[1],
+                           category_filter=session_data[2],
+                           date_before=session_data[3],
+                           date_after=session_data[4])
+    
+@auth_bp.route("/staff_dashboard")
+def staff_dashboard():
+    session_data = get_ticket_data()
+    return render_template("staff_dashboard.html", tickets=session_data[0],
+                           status_filter=session_data[1],
+                           category_filter=session_data[2],
+                           date_before=session_data[3],
+                           date_after=session_data[4])
+
+
+def get_ticket_data():
     # Pull all tickets from database so dashboard can render current data
     connection = app.database.connect_db()
     status_filter = request.args.get("status_filter", "")
@@ -79,13 +99,10 @@ def dashboard():
         # Always close DB connection after query
         connection.close()
 
-    # Pass tickets list to dashboard template
-    return render_template("dashboard.html", tickets=filtered,
-                           status_filter=status_filter,
-                           category_filter=category_filter,
-                           date_before=date_before,
-                           date_after=date_after)
+    session_data = [filtered, status_filter, category_filter, date_before, date_after]
 
+    # Pass tickets list to dashboard template
+    return session_data
 
 @auth_bp.route("/tickets/new", methods=["GET", "POST"])
 def new_ticket():
