@@ -30,7 +30,7 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
 
     # Create university accounts table
     connection.execute(
-       ##
+      """
         CREATE TABLE IF NOT EXISTS UniversityAccount (
             id INTEGER PRIMARY KEY AUTOINCREMENT,      -- unique account ID
             email TEXT NOT NULL UNIQUE,                -- university email
@@ -38,7 +38,7 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
             full_name TEXT NOT NULL,
             role TEXT NOT NULL
         )
-       ##
+       """
     )
 
     connection.commit()
