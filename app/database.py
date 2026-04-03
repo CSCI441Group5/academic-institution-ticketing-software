@@ -14,7 +14,6 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
     """Create the tickets table if it does not already exist"""
 
     connection.execute(
-         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS tickets (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,               -- unique ticket ID
