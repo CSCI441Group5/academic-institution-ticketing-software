@@ -14,7 +14,7 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
     """Create the tickets table if it does not already exist"""
 
     connection.execute(
-        ##
+         """
         CREATE TABLE IF NOT EXISTS tickets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,               # unique ticket ID
             title TEXT NOT NULL,                                # short ticket summary
@@ -24,8 +24,8 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
             requester_account_id INTEGER,                       # linked university account
             status TEXT NOT NULL DEFAULT 'Pending',             # ticket state (default = Pending)
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP  # auto timestamp
-        ) ##
-    
+        ) 
+             """
     )
 
     # Create university accounts table
