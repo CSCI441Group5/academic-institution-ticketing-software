@@ -49,6 +49,8 @@ def login_submit():
     session["user_email"] = account.email
     session["user_full_name"] = account.full_name
     session["user_role"] = account.role
+    if(session["user_role"] == "staff"):
+        session["department"] = account.department
 
     if(session["user_role"] == "student"):
         return redirect(url_for("auth.dashboard"))
@@ -66,15 +68,15 @@ def dashboard():
     
 @auth_bp.route("/staff_dashboard")
 def staff_dashboard():
-    session_data = get_ticket_data()
+    department = session.get("department")
+    session_data = get_ticket_data(department)
     return render_template("staff_dashboard.html", tickets=session_data[0],
                            status_filter=session_data[1],
                            category_filter=session_data[2],
                            date_before=session_data[3],
                            date_after=session_data[4])
 
-
-def get_ticket_data():
+def get_ticket_data(department = None):
     # Pull all tickets from database so dashboard can render current data
     connection = app.database.connect_db()
     status_filter = request.args.get("status_filter", "")
@@ -93,7 +95,7 @@ def get_ticket_data():
         filtered = tickets
 
         filtered = app.tickets.search_tickets(
-            tickets, (status_filter, category_filter, date_before, date_after))
+            tickets, (status_filter, category_filter, date_before, date_after, department))
 
     finally:
         # Always close DB connection after query

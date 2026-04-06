@@ -67,6 +67,7 @@ def search_tickets(tickets, filters):
     category_filter = filters[1]
     before_date = filters[2]
     after_date = filters[3]
+    department = filters[4]
     filtered = tickets
 
     if status_filter != "":
@@ -89,5 +90,8 @@ def search_tickets(tickets, filters):
         cutoff = datetime.strptime(after_date, "%Y-%m-%d").date()
         filtered = [t for t in filtered
                     if datetime.strptime(t["created_at"], "%Y-%m-%d %H:%M:%S").date() > cutoff]
+
+    if department != "":
+        filtered = [t for t in filtered if t["category"] == department]
 
     return filtered

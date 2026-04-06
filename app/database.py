@@ -36,7 +36,8 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
             email TEXT NOT NULL UNIQUE,                -- university email
             password_hash TEXT NOT NULL,
             full_name TEXT NOT NULL,
-            role TEXT NOT NULL
+            role TEXT NOT NULL,
+            department
         )
         """
     )
@@ -123,7 +124,7 @@ def get_university_account_by_email(email):
         # Match email case-insensitively so submitted form values are flexible
         cursor = connection.execute(
             """
-            SELECT id, email, password_hash, full_name, role
+            SELECT id, email, password_hash, full_name, role, department
             FROM UniversityAccount
             WHERE lower(email) = lower(?)
             """,
@@ -146,14 +147,15 @@ def save_university_account(account_data):
         connection.execute(
             """
             INSERT OR IGNORE INTO UniversityAccount
-            (email, password_hash, full_name, role)
-            VALUES (?, ?, ?, ?)
+            (email, password_hash, full_name, role, department)
+            VALUES (?, ?, ?, ?, ?)
             """,
             (
                 account_data["email"],
                 account_data["password_hash"],
                 account_data["full_name"],
-                account_data["role"]
+                account_data["role"],
+                account_data["department"]
             ),
         )
 
