@@ -70,16 +70,15 @@ def dashboard():
     date_after = request.args.get("date_after", "")
 
     try:
-           tickets = connection.execute(
-        """
-        SELECT id, title, category, description, status, created_at
-        FROM tickets
-        WHERE requester_account_id = ?
-        ORDER BY id DESC
-        """,
-        (session.get("user_account_id"),)
-    ).fetchall()
-        filtered = tickets
+        tickets = connection.execute(
+            """
+            SELECT id, title, category, description, status, created_at
+            FROM tickets
+            WHERE requester_account_id = ?
+            ORDER BY id DESC
+            """,
+            (session.get("user_account_id"),)
+        ).fetchall()
 
         filtered = app.tickets.search_tickets(
             tickets, (status_filter, category_filter, date_before, date_after))
