@@ -53,6 +53,13 @@ def login_submit():
     return redirect(url_for("auth.dashboard"))
 
 
+@auth_bp.post("/logout")
+def logout():
+    # Remove any session data for the current user and return to login
+    session.clear()
+    return redirect(url_for("auth.login"))
+
+
 @auth_bp.route("/dashboard")
 def dashboard():
     # Pull all tickets from database so dashboard can render current data
