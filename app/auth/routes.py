@@ -62,37 +62,55 @@ def logout():
 
 @auth_bp.route("/dashboard")
 def dashboard():
-    # Pull all tickets from database so dashboard can render current data
+    # Pull tickets from database so dashboard can render current data; If user is "staff" or "manager" they can view 
+    # all tickets; if they are "student" they can only view their own tickets
     connection = app.database.connect_db()
+
     status_filter = request.args.get("status_filter", "")
     category_filter = request.args.get("category_filter", "")
     date_before = request.args.get("date_before", "")
     date_after = request.args.get("date_after", "")
 
     try:
-        tickets = connection.execute(
+        user_role = session.get("user_role")
+        user_id = session.get("user_account_id")
+
+        if user_role in ["staff", "manager"]:
+            # Staff/manager → see all tickets
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                ORDER BY id DESC
             """
-            SELECT id, title, category, description, status, created_at
-            FROM tickets
-            WHERE requester_account_id = ?
-            ORDER BY id DESC
-            """,
-            (session.get("user_account_id"),)
-        ).fetchall()
+            params = ()
+        else:
+            # Students → only their tickets
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                WHERE requester_account_id = ?
+                ORDER BY id DESC
+            """
+            params = (user_id,)
+
+        tickets = connection.execute(query, params).fetchall()
 
         filtered = app.tickets.search_tickets(
-            tickets, (status_filter, category_filter, date_before, date_after))
+            tickets,
+            (status_filter, category_filter, date_before, date_after)
+        )
 
     finally:
-        # Always close DB connection after query
         connection.close()
 
-    # Pass tickets list to dashboard template
-    return render_template("dashboard.html", tickets=filtered,
-                           status_filter=status_filter,
-                           category_filter=category_filter,
-                           date_before=date_before,
-                           date_after=date_after)
+    return render_template(
+        "dashboard.html",
+        tickets=filtered,
+        status_filter=status_filter,
+        category_filter=category_filter,
+        date_before=date_before,
+        date_after=date_after
+    )
 
 
 @auth_bp.route("/tickets/new", methods=["GET", "POST"])
