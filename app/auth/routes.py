@@ -57,6 +57,13 @@ def login_submit():
     else:
         return redirect(url_for("auth.staff_dashboard"))
 
+@auth_bp.post("/logout")
+def logout():
+    # Remove any session data for the current user and return to login
+    session.clear()
+    return redirect(url_for("auth.login"))
+
+
 @auth_bp.route("/dashboard")
 def dashboard():
     session_data = get_ticket_data()
@@ -79,26 +86,40 @@ def staff_dashboard():
 def get_ticket_data(department = None):
     # Pull all tickets from database so dashboard can render current data
     connection = app.database.connect_db()
+
     status_filter = request.args.get("status_filter", "")
     category_filter = request.args.get("category_filter", "")
     date_before = request.args.get("date_before", "")
     date_after = request.args.get("date_after", "")
 
     try:
-        tickets = connection.execute(
+        user_role = session.get("user_role")
+        user_id = session.get("user_account_id")
+
+        if user_role in ["staff", "manager"]:
+            # Staff/manager → see all tickets
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                ORDER BY id DESC
             """
-            SELECT id, title, category, description, status, created_at
-            FROM tickets
-            ORDER BY id DESC
+            params = ()
+        else:
+            # Students → only their tickets
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                WHERE requester_account_id = ?
+                ORDER BY id DESC
             """
-        ).fetchall()
-        filtered = tickets
+            params = (user_id,)
+
+        tickets = connection.execute(query, params).fetchall()
 
         filtered = app.tickets.search_tickets(
             tickets, (status_filter, category_filter, date_before, date_after, department))
 
     finally:
-        # Always close DB connection after query
         connection.close()
 
     session_data = [filtered, status_filter, category_filter, date_before, date_after]
