@@ -1,5 +1,5 @@
-# Initializes the Flask application
-# Registers blueprints and shared configuration
+# Creates the Flask app and registers shared routes
+# Also loads starter data so login and dashboard pages have usable data on first run
 
 # Used to read environmental variables
 import os
@@ -16,6 +16,7 @@ def create_app():
     from app.seed_accounts import seed_demo_tickets, seed_university_accounts
 
     with app.app_context():
+        # Seed default accounts first so demo tickets can link back to valid users
         seed_university_accounts()
         seed_demo_tickets()
 
