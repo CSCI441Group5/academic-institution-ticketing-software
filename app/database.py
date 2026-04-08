@@ -23,7 +23,8 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
                 attachment TEXT,                                    -- file path or attachment reference
                 requester_account_id INTEGER,                       -- linked university account
                 status TEXT NOT NULL DEFAULT 'Pending',             -- ticket state
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP  -- auto timestamp
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, -- auto timestamp
+                priority INT NOT NULL DEFAULT 1                     -- priority of ticket
             )
             """
 )
@@ -78,9 +79,10 @@ def save_ticket(ticket_data):
                 description,
                 attachment,
                 requester_account_id,
-                status
+                status,
+                priority
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticket_data["title"],                  # required
@@ -89,6 +91,7 @@ def save_ticket(ticket_data):
                 ticket_data.get("attachment"),         # optional
                 ticket_data.get("requester_account_id"),
                 ticket_data.get("status", "Pending"),  # default if missing
+                ticket_data["priority"]
             ),
         )
 

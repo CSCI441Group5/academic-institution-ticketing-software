@@ -8,11 +8,12 @@ class User:
         self.role = role
 
 class Ticket:
-    def __init__(self, ticket_id, category, description, status):
+    def __init__(self, ticket_id, category, description, status, priority):
         self.ticket_id = ticket_id
         self.category = category
         self.description = description
         self.status = status
+        self.priority = priority
 
 # University account model used by the local identity flow.
 class UniversityAccount:

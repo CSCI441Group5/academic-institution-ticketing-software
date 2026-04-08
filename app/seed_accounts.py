@@ -63,6 +63,7 @@ def build_seeded_accounts():
             "password_hash": generate_password_hash("password"),
             "full_name": "Susan",
             "role": "faculty",
+            "department": ""
         }
     ]
 
@@ -84,18 +85,21 @@ def build_seeded_tickets():
                 "category": "IT",
                 "description": "Can sign in to Blackboard but it keeps returning me to the login page.",
                 "status": "Pending",
+                "priority": 1
             },
             {
                 "title": "Projector not connecting",
                 "category": "Facilities",
                 "description": "Classroom projector powers on but it doesn't display laptop input.",
                 "status": "In Progress",
+                "priority": 2
             },
             {
                 "title": "Need tutoring session access",
                 "category": "Academic Support",
                 "description": "Can't access tutoring resources in the student portal.",
                 "status": "Resolved",
+                "priority": 3
             },
         ],
         "student2@parkfield.edu": [
@@ -104,18 +108,21 @@ def build_seeded_tickets():
                 "category": "IT",
                 "description": "Campus Wi-Fi drops every few minutes while studying in the library.",
                 "status": "Pending",
+                "priority": 1
             },
             {
                 "title": "Broken desk in science lab",
                 "category": "Facilities",
                 "description": "Desk in assigned lab station is unstable and unsafe to use.",
                 "status": "Closed",
+                "priority": 2
             },
             {
                 "title": "Advisor meeting request issue",
                 "category": "Academic Support",
                 "description": "Appointment system shows no available advising slots even after hold was removed.",
                 "status": "In Progress",
+                "priority": 3
             },
         ],
     }
@@ -142,5 +149,6 @@ def seed_demo_tickets():
                     "attachment": None,
                     "requester_account_id": account["id"],
                     "status": ticket_data["status"],
+                    "priority": ticket_data["priority"]
                 }
             )
