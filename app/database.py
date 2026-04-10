@@ -23,7 +23,8 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
                 attachment TEXT,                                    -- file path or attachment reference
                 requester_account_id INTEGER,                       -- linked university account
                 status TEXT NOT NULL DEFAULT 'Pending',             -- ticket state
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP  -- auto timestamp
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, -- auto timestamp
+                claimed_by TEXT                                     -- name of staff who claimed the ticket if there exists one
             )
             """
 )
@@ -34,10 +35,10 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS UniversityAccount (
             id INTEGER PRIMARY KEY AUTOINCREMENT,      -- unique account ID
             email TEXT NOT NULL UNIQUE,                -- university email
-            password_hash TEXT NOT NULL,
-            full_name TEXT NOT NULL,
-            role TEXT NOT NULL,
-            department TEXT NOT NULL
+            password_hash TEXT NOT NULL,               -- password hashed
+            full_name TEXT NOT NULL,                   -- name of account owner
+            role TEXT NOT NULL,                        -- student staff or manager
+            department TEXT NOT NULL                   -- IT Facilities or Academic Support
         )
        """
     )
@@ -78,9 +79,10 @@ def save_ticket(ticket_data):
                 description,
                 attachment,
                 requester_account_id,
-                status
+                status,
+                claimed_by
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticket_data["title"],                  # required
@@ -89,6 +91,7 @@ def save_ticket(ticket_data):
                 ticket_data.get("attachment"),         # optional
                 ticket_data.get("requester_account_id"),
                 ticket_data.get("status", "Pending"),  # default if missing
+                ticket_data.get("claimed_by", "")
             ),
         )
 
@@ -177,6 +180,21 @@ def update_ticket(ticket_id, status, description=""):
         connection.commit()
 
         return cursor.fetchone()
+    finally:
+        connection.close()
+
+def claim_ticket(ticket_id, staff_name)-> None:
+    """Claim Ticket"""
+    print("Ticket ID: ", ticket_id)
+    print("Staff Name: ", staff_name)
+    try:
+        connection = connect_db()
+
+        cursor = connection.execute("UPDATE tickets SET claimed_by = ? WHERE id = ?", (staff_name, ticket_id))
+        print(cursor.rowcount)
+
+        connection.commit()
+
     finally:
         connection.close()
 

@@ -77,6 +77,7 @@ def dashboard():
     
 @auth_bp.route("/staff_dashboard")
 def staff_dashboard():
+    print("Directing to staff dashboard")
     department = session.get("department")
     session_data = get_ticket_data(department)
     return render_template("staff_dashboard.html", tickets=session_data[0],
@@ -85,6 +86,7 @@ def staff_dashboard():
                            date_before=session_data[3],
                            date_after=session_data[4])
 
+# This function is not a route, it does not return a render_template
 def get_ticket_data(department = None):
     # Pull all tickets from database so dashboard can render current data
     connection = app.database.connect_db()
@@ -103,7 +105,7 @@ def get_ticket_data(department = None):
             # Staff/manager path
             # Loads every ticket so support roles can manage the full queue
             query = """
-                SELECT id, title, category, description, status, created_at
+                SELECT id, title, category, description, status, created_at, claimed_by
                 FROM tickets
                 ORDER BY id DESC
             """
@@ -112,7 +114,7 @@ def get_ticket_data(department = None):
             # Student path
             # Only loads tickets linked to the logged-in student's account ID
             query = """
-                SELECT id, title, category, description, status, created_at
+                SELECT id, title, category, description, status, created_at, claimed_by
                 FROM tickets
                 WHERE requester_account_id = ?
                 ORDER BY id DESC
@@ -131,9 +133,6 @@ def get_ticket_data(department = None):
     finally:
         # Close DB connection after the dashboard data is loaded
         connection.close()
-
-    for ticket in filtered:
-        print(ticket["id"], ticket["description"], ticket["category"])
 
     return [filtered, status_filter, category_filter, date_before, date_after]
 
@@ -191,3 +190,10 @@ def update_ticket(ticket_id):
     # Current update path only changes status and description
     app.database.update_ticket(ticket_id, status, description)
     return redirect(url_for("auth.dashboard"))
+
+@auth_bp.route("/tickets/<int:ticket_id>/claim", methods=["POST"])
+def claim_ticket(ticket_id):
+    staff_name = request.form["user_name"]
+    
+    app.database.claim_ticket(ticket_id, staff_name)
+    return redirect(url_for("auth.staff_dashboard"))

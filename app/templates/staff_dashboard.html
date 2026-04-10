@@ -87,7 +87,17 @@
                 <p>Status: {{ ticket["status"] }}</p>
                 <p>Category: {{ ticket["category"] }}</p>
                 <p>Description: {{ ticket["description"] }}</p>
-                <button onclick="window.location='?edit={{ ticket.id }}'">Edit</button>
+                {%if session.get("user_full_name") == ticket["claimed_by"]%}
+                    <button onclick="location='?edit={{ ticket.id }}'">Edit</button>
+                    <p>Ticket Claimed By: {{ticket["claimed_by"]}}</p>
+                {%else%}
+                    <form method="POST" action="/tickets/{{ticket['id']}}/claim">
+                        <input type="hidden" name="user_name" value="{{session.get('user_full_name')}}">
+                        <button type="submit">Claim</button>
+                        <p>User Full Name: {{session.get("user_full_name")}}</p>
+                        <p>Ticket Claimed By: {{ticket["claimed_by"]}}</p>
+                    </form>
+                {%endif%}
             {% endif %}
         {% endfor %} {% else %}
             <!-- Shown when no tickets have been submitted yet -->
