@@ -78,7 +78,6 @@ def dashboard():
 @auth_bp.route("/staff_dashboard")
 def staff_dashboard():
     department = session.get("department")
-    print("Session Department: ", department)
     session_data = get_ticket_data(department)
     return render_template("staff_dashboard.html", tickets=session_data[0],
                            status_filter=session_data[1],
@@ -133,17 +132,10 @@ def get_ticket_data(department = None):
         # Close DB connection after the dashboard data is loaded
         connection.close()
 
-    print("Date Before: ", date_before)
-    print("Date After: ", date_after)
+    for ticket in filtered:
+        print(ticket["id"], ticket["description"], ticket["category"])
 
-    return render_template(
-        "dashboard.html",
-        tickets=filtered,
-        status_filter=status_filter,
-        category_filter=category_filter,
-        date_before=date_before,
-        date_after=date_after
-    )
+    return [filtered, status_filter, category_filter, date_before, date_after]
 
 # Handles ticket form display and submission
 # GET shows the form
