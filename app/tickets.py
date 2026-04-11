@@ -55,7 +55,7 @@ def update_ticket_status(ticket_id: int, status: str, notes: str):
     Update ticket status.
     """
 
-    ticket = update_ticket(status, ticket_id)
+    ticket = update_ticket(ticket_id, status)
     return ticket
 
 

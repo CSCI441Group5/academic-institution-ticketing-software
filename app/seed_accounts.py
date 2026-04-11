@@ -38,6 +38,20 @@ def build_seeded_accounts():
             "department": "Facilities"
         },
         {
+            "email": "staff3@parkfield.edu",
+            "password_hash": generate_password_hash("password"),
+            "full_name": "Notch",
+            "role": "staff",
+            "department": "Academic Support"
+        },
+        {
+            "email": "staff4@parkfield.edu",
+            "password_hash": generate_password_hash("password"),
+            "full_name": "Jeff",
+            "role": "staff",
+            "department": "Academic Support"
+        },
+        {
             "email": "manager1@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Evan",
@@ -49,14 +63,14 @@ def build_seeded_accounts():
             "password_hash": generate_password_hash("password"),
             "full_name": "Fred",
             "role": "manager",
-            "department": ""
+            "department": "IT"
         },
         {
-            "email": "faculty1@parkfield.edu",
+            "email": "manager3@parkfield.edu",
             "password_hash": generate_password_hash("password"),
-            "full_name": "Susan",
-            "role": "faculty",
-            "department": ""
+            "full_name": "Jeb",
+            "role": "manager",
+            "department": "Facilities"
         }
     ]
 

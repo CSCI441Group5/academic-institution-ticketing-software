@@ -167,14 +167,14 @@ def save_university_account(account_data):
         connection.close()
 
 
-def update_ticket(ticket_id, status, description=""):
+def update_ticket(ticket_id, status, claimed_by=""):
     """Update ticket."""
-
+    print("Updating ticket ", ticket_id, " to be claimed by ", claimed_by)
     try:
         connection = connect_db()
 
-        cursor = connection.execute("UPDATE tickets SET status = ?, description = ? WHERE id = ?",
-                                    (status, description, ticket_id)
+        cursor = connection.execute("UPDATE tickets SET status = ?, claimed_by = ? WHERE id = ?",
+                                    (status, claimed_by, ticket_id)
                                     )
 
         connection.commit()

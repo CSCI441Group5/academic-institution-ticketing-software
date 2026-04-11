@@ -53,53 +53,73 @@
         </form>
 
         <!-- If tickets exist, render each one -->
-        {% if tickets %} {% for ticket in tickets %}
-                <hr />
-            {% if request.args.get("edit") == ticket["id"]|string %}
-                <form method="POST", action = "/tickets/{{ticket['id']}}/update">
-                    <p><strong>{{ ticket["id"] }}</strong></p>
-                    <div>
-                        <p>Ticket ID: {{ ticket["id"] }}</p>
-                        <p>Submission Date: {{ ticket["created_at"] }}</p>
-                    </div>
-                    <div>
-                        <label>Status:</label>
-                        <select type="select" name="status">
-                            <option value="Pending" {% if ticket['status'] == "Pending"%}selected {%endif%}>Pending</option>
-                            <option value="In Progress"{% if ticket['status'] == "In Progress"%}selected {%endif%}>In Progress</option>
-                            <option value="Resolved"{% if ticket['status'] == "Resolved"%}selected {%endif%}>Resolved</option>
-                            <option value="Closed"{% if ticket['status'] == "Closed"%}selected {%endif%}>Closed</option>
-                        </select>
-                    </div>
-                    <div>
-                        <p>Category: {{ ticket["category"] }}</p>
-                    </div>
-                    <div>
-                        <label>Description:</label>
-                        <textarea name="description">{{ticket['description']}}</textarea>
-                    </div>
-                    <button type="submit">Save</button>
-            </form>
-            {% else %}
-                <!--View Mode-->
-                <p>Ticket ID: {{ ticket["id"] }}</p>
-                <p>Submission Date: {{ ticket["created_at"] }}</p>
-                <p>Status: {{ ticket["status"] }}</p>
-                <p>Category: {{ ticket["category"] }}</p>
-                <p>Description: {{ ticket["description"] }}</p>
-                {%if session.get("user_full_name") == ticket["claimed_by"]%}
-                    <button onclick="location='?edit={{ ticket.id }}'">Edit</button>
-                    <p>Ticket Claimed By: {{ticket["claimed_by"]}}</p>
-                {%else%}
-                    <form method="POST" action="/tickets/{{ticket['id']}}/claim">
-                        <input type="hidden" name="user_name" value="{{session.get('user_full_name')}}">
-                        <button type="submit">Claim</button>
-                        <p>User Full Name: {{session.get("user_full_name")}}</p>
-                        <p>Ticket Claimed By: {{ticket["claimed_by"]}}</p>
-                    </form>
-                {%endif%}
-            {% endif %}
-        {% endfor %} {% else %}
+        {% if tickets %} 
+            {% for ticket in tickets %}
+                    <hr />
+                    <!-- Edit Mode -->
+                {% if request.args.get("edit") == ticket["id"]|string %}
+                    <form method="POST", action = "/tickets/{{ticket['id']}}/update">
+                        {% if session.get("user_role") == "staff" %}
+                            <input type="hidden" name="claimed_by" value='{{ticket["claimed_by"]}}'>
+                        {%endif%}
+                        <div>
+                            <p>Ticket ID: {{ ticket["id"] }}</p>
+                            <p>Submission Date: {{ ticket["created_at"] }}</p>
+                        </div>
+                        <div>
+                            <label>Status:</label>
+                            <select type="select" name="status">
+                                <option value="Pending" {% if ticket['status'] == "Pending"%}selected {%endif%}>Pending</option>
+                                <option value="In Progress"{% if ticket['status'] == "In Progress"%}selected {%endif%}>In Progress</option>
+                                <option value="Resolved"{% if ticket['status'] == "Resolved"%}selected {%endif%}>Resolved</option>
+                                <option value="Closed"{% if ticket['status'] == "Closed"%}selected {%endif%}>Closed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <p>Category: {{ ticket["category"] }}</p>
+                        </div>
+                        <div>
+                            <label>Description: {{ticket['description']}}</label>
+                        </div>
+                        <div>
+                            <!-- If user role is staff, just show who currently owns this ticket -->
+                            <p>Claimed By: {%if session.get("user_role") == "staff"%} {{ticket["claimed_by"]}} {%endif%}</p>
+
+                            <!-- If user role is a manager, allow editing of ticket owner -->
+                            {%if session.get("user_role") == "manager"%}
+                            <select type="select" name="claimed_by">
+                                {%for staff_member in staff %}
+                                    <option value="{{staff_member['full_name']}}" 
+                                    {%if ticket["claimed_by"]==staff_member["full_name"]%}selected {%endif%}>
+                                    {{staff_member['full_name']}}</option>
+                                {%endfor%}
+                                <option value=""
+                                {%if ticket['claimed_by']==''%}selected {%endif%}>None</option>
+                            </select>
+                            {%endif%}
+                        </div>
+                        <button type="submit">Save</button>
+                </form>
+                {% else %}
+                    <!--View Mode-->
+                    <p>Ticket ID: {{ ticket["id"] }}</p>
+                    <p>Submission Date: {{ ticket["created_at"] }}</p>
+                    <p>Status: {{ ticket["status"] }}</p>
+                    <p>Category: {{ ticket["category"] }}</p>
+                    <p>Description: {{ ticket["description"] }}</p>
+                    <p>Claimed By: {{ticket["claimed_by"]}}</p>
+                    {%if session.get("user_full_name") == ticket["claimed_by"] or session.get("user_role") == "manager"%}
+                        <button onclick="location='?edit={{ ticket.id }}'">Edit</button>
+                    {%elif ticket["claimed_by"] == ""%}
+                        <form method="POST" action="/tickets/{{ticket['id']}}/claim">
+                            <input type="hidden" name="user_name" value="{{session.get('user_full_name')}}">
+                            <button type="submit">Claim</button>
+                        </form>
+                    {%endif%}
+                {% endif %}
+            {% endfor %} 
+
+        {% else %}
             <!-- Shown when no tickets have been submitted yet -->
             <p>No tickets submitted yet.</p>
         {% endif %}

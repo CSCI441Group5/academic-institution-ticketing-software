@@ -77,14 +77,15 @@ def dashboard():
     
 @auth_bp.route("/staff_dashboard")
 def staff_dashboard():
-    print("Directing to staff dashboard")
     department = session.get("department")
     session_data = get_ticket_data(department)
+    staff_names = get_staff_accounts(department)
     return render_template("staff_dashboard.html", tickets=session_data[0],
                            status_filter=session_data[1],
                            category_filter=session_data[2],
                            date_before=session_data[3],
-                           date_after=session_data[4])
+                           date_after=session_data[4],
+                           staff = staff_names)
 
 # This function is not a route, it does not return a render_template
 def get_ticket_data(department = None):
@@ -136,6 +137,23 @@ def get_ticket_data(department = None):
 
     return [filtered, status_filter, category_filter, date_before, date_after]
 
+# Not a route
+def get_staff_accounts(department):
+    connection = app.database.connect_db()
+    query = """
+                SELECT full_name
+                FROM UniversityAccount
+                WHERE role == "staff"
+                AND department = ?
+            """
+    
+    params = (department,)
+    accounts = connection.execute(query, params).fetchall()
+
+    connection.close()
+    
+    return accounts
+
 # Handles ticket form display and submission
 # GET shows the form
 # POST validates required fields, saves the ticket, then redirects with success info
@@ -185,11 +203,11 @@ def new_ticket():
 def update_ticket(ticket_id):
     # Reads the edited fields from the dashboard form
     status = request.form["status"]
-    description = request.form["description"]
-
+    claimed_by = request.form["claimed_by"]
+    print(claimed_by, " is getting a new ticket")
     # Current update path only changes status and description
-    app.database.update_ticket(ticket_id, status, description)
-    return redirect(url_for("auth.dashboard"))
+    app.database.update_ticket(ticket_id, status, claimed_by)
+    return redirect(url_for("auth.staff_dashboard"))
 
 @auth_bp.route("/tickets/<int:ticket_id>/claim", methods=["POST"])
 def claim_ticket(ticket_id):
