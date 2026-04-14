@@ -24,6 +24,7 @@ class UniversityAccount:
         self.full_name = full_name
         self.role = role
         self.department = department
+        self.department = department
 
     @classmethod
     def from_row(cls, row):

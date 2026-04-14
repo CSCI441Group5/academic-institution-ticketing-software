@@ -83,6 +83,7 @@ def save_ticket(ticket_data):
                 claimed_by
             )
             VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticket_data["title"],                  # required
@@ -128,6 +129,7 @@ def get_university_account_by_email(email):
         cursor = connection.execute(
             """
             SELECT id, email, password_hash, full_name, role, department
+            SELECT id, email, password_hash, full_name, role, department
             FROM UniversityAccount
             WHERE lower(email) = lower(?)
             """,
@@ -143,24 +145,23 @@ def save_university_account(account_data):
     """Save university account if it does not already exist."""
 
     connection = connect_db()
-
-    try:
-        # Insert account only when the email does not already exist
-        # Using IGNORE for safer startup seeding
-        connection.execute(
-            """
+    query = """
             INSERT OR IGNORE INTO UniversityAccount
             (email, password_hash, full_name, role, department)
             VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                account_data["email"],
+            (email, password_hash, full_name, role, department)
+            VALUES (?, ?, ?, ?, ?)
+            """
+    
+    params = [account_data["email"],
                 account_data["password_hash"],
                 account_data["full_name"],
                 account_data["role"],
-                account_data["department"]
-            ),
-        )
+                account_data["department"]]
+    try:
+        # Insert account only when the email does not already exist
+        # Using IGNORE for safer startup seeding
+        connection.execute(query, params)
 
         connection.commit()
     finally:

@@ -91,4 +91,7 @@ def search_tickets(tickets, filters):
         filtered = [t for t in filtered
                     if t["category"] == department]
 
+    if department != "":
+        filtered = [t for t in filtered if t["category"] == department]
+
     return filtered
