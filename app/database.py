@@ -83,7 +83,6 @@ def save_ticket(ticket_data):
                 claimed_by
             )
             VALUES (?, ?, ?, ?, ?, ?, ?)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticket_data["title"],                  # required
@@ -129,7 +128,6 @@ def get_university_account_by_email(email):
         cursor = connection.execute(
             """
             SELECT id, email, password_hash, full_name, role, department
-            SELECT id, email, password_hash, full_name, role, department
             FROM UniversityAccount
             WHERE lower(email) = lower(?)
             """,
@@ -147,8 +145,6 @@ def save_university_account(account_data):
     connection = connect_db()
     query = """
             INSERT OR IGNORE INTO UniversityAccount
-            (email, password_hash, full_name, role, department)
-            VALUES (?, ?, ?, ?, ?)
             (email, password_hash, full_name, role, department)
             VALUES (?, ?, ?, ?, ?)
             """

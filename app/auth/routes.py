@@ -131,6 +131,8 @@ def get_ticket_data(department = None):
             (status_filter, category_filter, date_before, date_after, department)
         )
 
+        print(filtered)
+
     finally:
         # Close DB connection after the dashboard data is loaded
         connection.close()

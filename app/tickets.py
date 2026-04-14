@@ -76,12 +76,12 @@ def search_tickets(tickets, filters):
     if category_filter != "":
         filtered = [t for t in filtered if t["category"]
                     == category_filter]
-
+        
     if before_date != "":
         cutoff = datetime.strptime(before_date, "%Y-%m-%d").date()
         filtered = [t for t in filtered
                     if datetime.strptime(t["created_at"], "%Y-%m-%d %H:%M:%S").date() < cutoff]
-
+        
     if after_date != "":
         cutoff = datetime.strptime(after_date, "%Y-%m-%d").date()
         filtered = [t for t in filtered
@@ -90,8 +90,5 @@ def search_tickets(tickets, filters):
     if department not in ["", None]:
         filtered = [t for t in filtered
                     if t["category"] == department]
-
-    if department != "":
-        filtered = [t for t in filtered if t["category"] == department]
-
+        
     return filtered
