@@ -4,10 +4,6 @@
         <meta charset="UTF-8" />
         <title>Dashboard - Automated School Ticketing System</title>
         <!-- Loads the CSS file from Flask’s static folder -->
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='styles.css') }}"
-        />
     </head>
     <body>
         <h2>
@@ -51,10 +47,16 @@
             <div>
                 <p>Date:</p>
                 <label>After:</label>
-                <input type="date" id="date_after", name="date_after", value="{{date_after}}">
+                <input type="date" id="date_after" name="date_after" value=
+                {%if date_after is regex('\d{4}-\d{2}-\d{2}$') %}
+                    {{date_after}}
+                {%endif%}>
 
                 <label>Before:</label>
-                <input type="date" id="date_before", name="date_before", value="{{date_before}}">
+                <input type="date" id="date_before" name="date_before" value=
+                {%if date_before is regex('\d{4}-\d{2}-\d{2}$') %}
+                    {{date_before}}
+                {%endif%}>
             </div>
             <button type="submit">Filter</button>
         </p>
@@ -90,7 +92,6 @@
             </form>
             {% else %}
                 <!--View Mode-->
-                <p><strong>{{ ticket["title"] }}</strong></p>
                 <p>Ticket ID: {{ ticket["id"] }}</p>
                 <p>Submission Date: {{ ticket["created_at"] }}</p>
                 <p>Status: {{ ticket["status"] }}</p>

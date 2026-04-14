@@ -24,7 +24,7 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
                 requester_account_id INTEGER,                       -- linked university account
                 status TEXT NOT NULL DEFAULT 'Pending',             -- ticket state
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, -- auto timestamp
-                priority INT NOT NULL DEFAULT 1                     -- priority of ticket
+                claimed_by TEXT                                     -- name of staff who claimed the ticket if there exists one
             )
             """
 )
@@ -35,10 +35,10 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS UniversityAccount (
             id INTEGER PRIMARY KEY AUTOINCREMENT,      -- unique account ID
             email TEXT NOT NULL UNIQUE,                -- university email
-            password_hash TEXT NOT NULL,
-            full_name TEXT NOT NULL,
-            role TEXT NOT NULL,
-            department
+            password_hash TEXT NOT NULL,               -- password hashed
+            full_name TEXT NOT NULL,                   -- name of account owner
+            role TEXT NOT NULL,                        -- student staff or manager
+            department TEXT NOT NULL                   -- IT Facilities or Academic Support
         )
        """
     )
@@ -80,8 +80,9 @@ def save_ticket(ticket_data):
                 attachment,
                 requester_account_id,
                 status,
-                priority
+                claimed_by
             )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
@@ -91,7 +92,7 @@ def save_ticket(ticket_data):
                 ticket_data.get("attachment"),         # optional
                 ticket_data.get("requester_account_id"),
                 ticket_data.get("status", "Pending"),  # default if missing
-                ticket_data["priority"]
+                ticket_data.get("claimed_by", "")
             ),
         )
 
@@ -128,6 +129,7 @@ def get_university_account_by_email(email):
         cursor = connection.execute(
             """
             SELECT id, email, password_hash, full_name, role, department
+            SELECT id, email, password_hash, full_name, role, department
             FROM UniversityAccount
             WHERE lower(email) = lower(?)
             """,
@@ -143,43 +145,57 @@ def save_university_account(account_data):
     """Save university account if it does not already exist."""
 
     connection = connect_db()
-
-    try:
-        # Insert account only when the email does not already exist
-        # Using IGNORE for safer startup seeding
-        connection.execute(
-            """
+    query = """
             INSERT OR IGNORE INTO UniversityAccount
             (email, password_hash, full_name, role, department)
             VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                account_data["email"],
+            (email, password_hash, full_name, role, department)
+            VALUES (?, ?, ?, ?, ?)
+            """
+    
+    params = [account_data["email"],
                 account_data["password_hash"],
                 account_data["full_name"],
                 account_data["role"],
-                account_data["department"]
-            ),
-        )
+                account_data["department"]]
+    try:
+        # Insert account only when the email does not already exist
+        # Using IGNORE for safer startup seeding
+        connection.execute(query, params)
 
         connection.commit()
     finally:
         connection.close()
 
 
-def update_ticket(ticket_id, status, description=""):
+def update_ticket(ticket_id, status, claimed_by=""):
     """Update ticket."""
-
+    print("Updating ticket ", ticket_id, " to be claimed by ", claimed_by)
     try:
         connection = connect_db()
 
-        cursor = connection.execute("UPDATE tickets SET status = ?, description = ? WHERE id = ?",
-                                    (status, description, ticket_id)
+        cursor = connection.execute("UPDATE tickets SET status = ?, claimed_by = ? WHERE id = ?",
+                                    (status, claimed_by, ticket_id)
                                     )
 
         connection.commit()
 
         return cursor.fetchone()
+    finally:
+        connection.close()
+
+def claim_ticket(ticket_id, staff_name)-> None:
+    """Claim Ticket"""
+    print("Ticket ID: ", ticket_id)
+    print("Staff Name: ", staff_name)
+    try:
+        connection = connect_db()
+
+        cursor = connection.execute("UPDATE tickets SET claimed_by = ? WHERE id = ?", (staff_name, ticket_id))
+        print(cursor.rowcount)
+
+        connection.commit()
+
     finally:
         connection.close()
 

@@ -21,14 +21,14 @@ def build_seeded_accounts():
             "password_hash": generate_password_hash("password"),
             "full_name": "Bob",
             "role": "student",
-            "department" : ""
+            "department": ""
         },
         {
             "email": "staff1@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Carl",
             "role": "staff",
-            "department": "Academic Support"
+            "department": "IT"
         },
         {
             "email": "staff2@parkfield.edu",
@@ -40,30 +40,37 @@ def build_seeded_accounts():
         {
             "email": "staff3@parkfield.edu",
             "password_hash": generate_password_hash("password"),
-            "full_name": "Trisha",
+            "full_name": "Notch",
             "role": "staff",
-            "department": "IT"
+            "department": "Academic Support"
+        },
+        {
+            "email": "staff4@parkfield.edu",
+            "password_hash": generate_password_hash("password"),
+            "full_name": "Jeff",
+            "role": "staff",
+            "department": "Academic Support"
         },
         {
             "email": "manager1@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Evan",
             "role": "manager",
-            "department": ""
+            "department": "Academic Support"
         },
         {
             "email": "manager2@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Fred",
             "role": "manager",
-            "department": ""
+            "department": "IT"
         },
         {
-            "email": "faculty1@parkfield.edu",
+            "email": "manager3@parkfield.edu",
             "password_hash": generate_password_hash("password"),
-            "full_name": "Susan",
-            "role": "faculty",
-            "department": ""
+            "full_name": "Jeb",
+            "role": "manager",
+            "department": "Facilities"
         }
     ]
 
@@ -85,21 +92,21 @@ def build_seeded_tickets():
                 "category": "IT",
                 "description": "Can sign in to Blackboard but it keeps returning me to the login page.",
                 "status": "Pending",
-                "priority": 1
+                "claimed_by": ""
             },
             {
                 "title": "Projector not connecting",
                 "category": "Facilities",
                 "description": "Classroom projector powers on but it doesn't display laptop input.",
                 "status": "In Progress",
-                "priority": 2
+                "claimed_by": ""
             },
             {
                 "title": "Need tutoring session access",
                 "category": "Academic Support",
                 "description": "Can't access tutoring resources in the student portal.",
                 "status": "Resolved",
-                "priority": 3
+                "claimed_by": ""
             },
         ],
         "student2@parkfield.edu": [
@@ -108,21 +115,21 @@ def build_seeded_tickets():
                 "category": "IT",
                 "description": "Campus Wi-Fi drops every few minutes while studying in the library.",
                 "status": "Pending",
-                "priority": 1
+                "claimed_by": ""
             },
             {
                 "title": "Broken desk in science lab",
                 "category": "Facilities",
                 "description": "Desk in assigned lab station is unstable and unsafe to use.",
                 "status": "Closed",
-                "priority": 2
+                "claimed_by": ""
             },
             {
                 "title": "Advisor meeting request issue",
                 "category": "Academic Support",
                 "description": "Appointment system shows no available advising slots even after hold was removed.",
                 "status": "In Progress",
-                "priority": 3
+                "claimed_by": ""
             },
         ],
     }
@@ -149,6 +156,6 @@ def seed_demo_tickets():
                     "attachment": None,
                     "requester_account_id": account["id"],
                     "status": ticket_data["status"],
-                    "priority": ticket_data["priority"]
+                    "claimed_by": ticket_data["claimed_by"]
                 }
             )
