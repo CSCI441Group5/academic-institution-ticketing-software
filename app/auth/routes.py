@@ -77,9 +77,19 @@ def dashboard():
     
 @auth_bp.route("/staff_dashboard")
 def staff_dashboard():
+
+    # If a ticket is currently being edited, get staff from the same department as the ticket category
+    staff_names = []
+    if session.get("user_role") == "manager":
+        edit_ticket_id = request.args.get("edit")
+        if edit_ticket_id:
+            ticket = app.database.get_ticket(edit_ticket_id)
+            department = ticket['category']
+            staff_names = get_staff_accounts(department)
+    
     department = session.get("department")
     session_data = get_ticket_data(department)
-    staff_names = get_staff_accounts(department)
+
     return render_template("staff_dashboard.html", tickets=session_data[0],
                            status_filter=session_data[1],
                            category_filter=session_data[2],
@@ -130,8 +140,6 @@ def get_ticket_data(department = None):
             tickets,
             (status_filter, category_filter, date_before, date_after, department)
         )
-
-        print(filtered)
 
     finally:
         # Close DB connection after the dashboard data is loaded
@@ -201,13 +209,19 @@ def new_ticket():
     )
 
 
+@auth_bp.route("/tickets/<int:ticket_id>/edit", methods=["POST"])
+def edit_ticket(ticket_id):
+    ticket = app.database.get_ticket(ticket_id)
+    department = ticket['category']
+    staff = get_staff_accounts(department)
+    return redirect(url_for("auth.staff_dashboard"))
+
 @auth_bp.route("/tickets/<int:ticket_id>/update", methods=["POST"])
 def update_ticket(ticket_id):
     # Reads the edited fields from the dashboard form
     status = request.form["status"]
     claimed_by = request.form["claimed_by"]
-    print(claimed_by, " is getting a new ticket")
-    # Current update path only changes status and description
+    # Current update path only changes status and ownership
     app.database.update_ticket(ticket_id, status, claimed_by)
     return redirect(url_for("auth.staff_dashboard"))
 

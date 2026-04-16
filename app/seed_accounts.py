@@ -56,21 +56,21 @@ def build_seeded_accounts():
             "password_hash": generate_password_hash("password"),
             "full_name": "Evan",
             "role": "manager",
-            "department": "Academic Support"
+            "department": ""
         },
         {
             "email": "manager2@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Fred",
             "role": "manager",
-            "department": "IT"
+            "department": ""
         },
         {
             "email": "manager3@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Jeb",
             "role": "manager",
-            "department": "Facilities"
+            "department": ""
         }
     ]
 

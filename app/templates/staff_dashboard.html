@@ -99,7 +99,7 @@
                             {%endif%}
                         </div>
                         <button type="submit">Save</button>
-                </form>
+                    </form>
                 {% else %}
                     <!--View Mode-->
                     <p>Ticket ID: {{ ticket["id"] }}</p>
@@ -109,7 +109,9 @@
                     <p>Description: {{ ticket["description"] }}</p>
                     <p>Claimed By: {{ticket["claimed_by"]}}</p>
                     {%if session.get("user_full_name") == ticket["claimed_by"] or session.get("user_role") == "manager"%}
+                    <a href="/staff_dashboard?edit={{ticket['id']}}">
                         <button onclick="location='?edit={{ ticket.id }}'">Edit</button>
+                    </a>
                     {%elif ticket["claimed_by"] == ""%}
                         <form method="POST" action="/tickets/{{ticket['id']}}/claim">
                             <input type="hidden" name="user_name" value="{{session.get('user_full_name')}}">
