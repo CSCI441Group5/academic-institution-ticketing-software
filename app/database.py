@@ -22,7 +22,7 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
                 description TEXT NOT NULL,                          -- details about the problem
                 attachment TEXT,                                    -- file path or attachment reference
                 requester_account_id INTEGER,                       -- linked university account
-                status TEXT NOT NULL DEFAULT 'Pending',             -- ticket state
+                status TEXT NOT NULL DEFAULT 'Open',             -- ticket state
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, -- auto timestamp
                 claimed_by TEXT                                     -- name of staff who claimed the ticket if there exists one
             )
@@ -90,7 +90,7 @@ def save_ticket(ticket_data):
                 ticket_data["description"],            # required
                 ticket_data.get("attachment"),         # optional
                 ticket_data.get("requester_account_id"),
-                ticket_data.get("status", "Pending"),  # default if missing
+                ticket_data.get("status", "Open"),  # default if missing
                 ticket_data.get("claimed_by", "")
             ),
         )
