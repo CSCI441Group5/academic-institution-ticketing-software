@@ -7,8 +7,7 @@
     </head>
     <body>
         <h2>
-            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }}) ({{session.get("user_account_id") }})
-            <!-- Remove "({{session.get("user_account_id") }})" before testing-->
+            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
         </h2>
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
