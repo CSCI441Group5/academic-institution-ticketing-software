@@ -7,8 +7,7 @@
     </head>
     <body>
         <h2>
-            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }}) ({{session.get("user_account_id") }})
-            <!-- Remove "({{session.get("user_account_id") }})" before testing-->
+            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
         </h2>
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
@@ -27,7 +26,7 @@
                 <label>Status</label>
                 <select name="status_filter" id="status_filter">
                     <option value="">All</option>
-                    <option value="Pending" {% if status_filter == "Pending"%}selected {%endif%}>Pending</option>
+                    <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
                     <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
                     <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
                     <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
@@ -75,10 +74,10 @@
                     <div>
                         <label>Status:</label>
                         <select type="select" name="status">
-                            <option value="Pending" {% if ticket['status'] == "Pending"%}selected {%endif%}>Pending</option>
-                            <option value="In Progress"{% if ticket['status'] == "In Progress"%}selected {%endif%}>In Progress</option>
-                            <option value="Resolved"{% if ticket['status'] == "Resolved"%}selected {%endif%}>Resolved</option>
-                            <option value="Closed"{% if ticket['status'] == "Closed"%}selected {%endif%}>Closed</option>
+                            <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
+                            <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
+                            <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
+                            <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
                         </select>
                     </div>
                     <div>
