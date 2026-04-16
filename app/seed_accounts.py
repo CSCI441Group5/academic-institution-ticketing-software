@@ -91,21 +91,21 @@ def build_seeded_tickets():
                 "title": "Blackboard login loop",
                 "category": "IT",
                 "description": "Can sign in to Blackboard but it keeps returning me to the login page.",
-                "status": "Pending",
+                "status": "Open",
                 "claimed_by": ""
             },
             {
                 "title": "Projector not connecting",
                 "category": "Facilities",
                 "description": "Classroom projector powers on but it doesn't display laptop input.",
-                "status": "In Progress",
+                "status": "Open",
                 "claimed_by": ""
             },
             {
                 "title": "Need tutoring session access",
                 "category": "Academic Support",
                 "description": "Can't access tutoring resources in the student portal.",
-                "status": "Resolved",
+                "status": "Closed",
                 "claimed_by": ""
             },
         ],
@@ -114,7 +114,7 @@ def build_seeded_tickets():
                 "title": "Wi-Fi disconnects in library",
                 "category": "IT",
                 "description": "Campus Wi-Fi drops every few minutes while studying in the library.",
-                "status": "Pending",
+                "status": "Open",
                 "claimed_by": ""
             },
             {
@@ -128,7 +128,7 @@ def build_seeded_tickets():
                 "title": "Advisor meeting request issue",
                 "category": "Academic Support",
                 "description": "Appointment system shows no available advising slots even after hold was removed.",
-                "status": "In Progress",
+                "status": "Open",
                 "claimed_by": ""
             },
         ],
