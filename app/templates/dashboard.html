@@ -28,6 +28,7 @@
                     <option value="">All</option>
                     <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
                     <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
+                    <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
                     <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
                 </select>
             </div>
@@ -75,6 +76,7 @@
                         <select type="select" name="status">
                             <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
                             <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
+                            <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
                             <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
                         </select>
                     </div>
