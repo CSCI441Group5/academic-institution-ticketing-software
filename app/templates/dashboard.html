@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <title>Dashboard - Automated School Ticketing System</title>
         <!-- Loads the CSS file from Flask’s static folder -->
-         <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
     </head>
     <body>
         <h2>
@@ -23,6 +23,15 @@
 
         <!-- Light/Dark Theme Toggle Button-->
         <button id="theme-toggle">Toggle Theme</button>
+        
+
+        <!-- Text font size toggle buttons -->
+        <div>
+           <button id="text-smaller">A-</button>
+           <button id="text-reset">A</button>
+           <button id="text-bigger">A+</button>
+        </div>
+
         <script src="{{url_for('static', filename='js/theme.js')}}"></script>
 
         <form method="get" id="filters">

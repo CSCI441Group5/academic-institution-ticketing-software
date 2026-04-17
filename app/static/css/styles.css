@@ -7,6 +7,7 @@ body {
 
     background: var(--bg);
     color: var(--text);
+    font-size: var(--font-size);
 }
 
 .login-menu {
@@ -54,6 +55,8 @@ body {
     --bg: #ffffff;
     --text: #000000;
     --primary: #0066ff;
+
+    --font-size: 16px;
 }
 
 [data-theme="dark"]{
