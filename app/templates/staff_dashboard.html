@@ -7,7 +7,13 @@
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
         </form>
+
+        <!-- Light/Dark Theme Toggle Button-->
+        <button id="theme-toggle">Toggle Theme</button>
+        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+
         <!-- Loads the CSS file from Flask’s static folder -->
+         <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
     </head>
     <body>
         <h1>User Tickets</h1>

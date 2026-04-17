@@ -90,7 +90,8 @@ def staff_dashboard():
     department = session.get("department")
     session_data = get_ticket_data(department)
 
-    return render_template("staff_dashboard.html", tickets=session_data[0],
+    return render_template("staff_dashboard.html", 
+                           tickets=session_data[0],
                            status_filter=session_data[1],
                            category_filter=session_data[2],
                            date_before=session_data[3],
