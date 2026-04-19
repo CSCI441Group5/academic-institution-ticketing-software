@@ -20,6 +20,11 @@
                 <button type="button">Create New Ticket</button>
             </a>
         </p>
+        <p>
+            <a href="{{ url_for('auth.archive') }}">
+                <button type="button">Go To Archives</button>
+            </a>
+        </p>
 
         <!-- Light/Dark Theme Toggle Button-->
         <button id="theme-toggle">Toggle Theme</button>
@@ -43,7 +48,6 @@
                     <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
                     <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
                     <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
-                    <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
                 </select>
             </div>
 
