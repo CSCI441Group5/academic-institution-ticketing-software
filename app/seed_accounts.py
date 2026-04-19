@@ -14,42 +14,63 @@ def build_seeded_accounts():
             "password_hash": generate_password_hash("password"),
             "full_name": "Amy",
             "role": "student",
+            "department": ""
         },
         {
             "email": "student2@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Bob",
             "role": "student",
+            "department": ""
         },
         {
             "email": "staff1@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Carl",
             "role": "staff",
+            "department": "IT"
         },
         {
             "email": "staff2@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Dana",
             "role": "staff",
+            "department": "Facilities"
+        },
+        {
+            "email": "staff3@parkfield.edu",
+            "password_hash": generate_password_hash("password"),
+            "full_name": "Notch",
+            "role": "staff",
+            "department": "Academic Support"
+        },
+        {
+            "email": "staff4@parkfield.edu",
+            "password_hash": generate_password_hash("password"),
+            "full_name": "Jeff",
+            "role": "staff",
+            "department": "Academic Support"
         },
         {
             "email": "manager1@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Evan",
             "role": "manager",
+            "department": ""
         },
         {
             "email": "manager2@parkfield.edu",
             "password_hash": generate_password_hash("password"),
             "full_name": "Fred",
             "role": "manager",
+            "department": ""
         },
         {
-            "email": "faculty1@parkfield.edu",
+            "email": "manager3@parkfield.edu",
             "password_hash": generate_password_hash("password"),
-            "full_name": "Susan",
-            "role": "faculty",
+            "full_name": "Jeb",
+            "role": "manager",
+            "department": ""
         }
     ]
 
@@ -70,19 +91,22 @@ def build_seeded_tickets():
                 "title": "Blackboard login loop",
                 "category": "IT",
                 "description": "Can sign in to Blackboard but it keeps returning me to the login page.",
-                "status": "Pending",
+                "status": "Open",
+                "claimed_by": ""
             },
             {
                 "title": "Projector not connecting",
                 "category": "Facilities",
                 "description": "Classroom projector powers on but it doesn't display laptop input.",
-                "status": "In Progress",
+                "status": "Open",
+                "claimed_by": ""
             },
             {
                 "title": "Need tutoring session access",
                 "category": "Academic Support",
                 "description": "Can't access tutoring resources in the student portal.",
-                "status": "Resolved",
+                "status": "Closed",
+                "claimed_by": ""
             },
         ],
         "student2@parkfield.edu": [
@@ -90,19 +114,22 @@ def build_seeded_tickets():
                 "title": "Wi-Fi disconnects in library",
                 "category": "IT",
                 "description": "Campus Wi-Fi drops every few minutes while studying in the library.",
-                "status": "Pending",
+                "status": "Open",
+                "claimed_by": ""
             },
             {
                 "title": "Broken desk in science lab",
                 "category": "Facilities",
                 "description": "Desk in assigned lab station is unstable and unsafe to use.",
                 "status": "Closed",
+                "claimed_by": ""
             },
             {
                 "title": "Advisor meeting request issue",
                 "category": "Academic Support",
                 "description": "Appointment system shows no available advising slots even after hold was removed.",
-                "status": "In Progress",
+                "status": "Open",
+                "claimed_by": ""
             },
         ],
     }
@@ -129,5 +156,6 @@ def seed_demo_tickets():
                     "attachment": None,
                     "requester_account_id": account["id"],
                     "status": ticket_data["status"],
+                    "claimed_by": ticket_data["claimed_by"]
                 }
             )

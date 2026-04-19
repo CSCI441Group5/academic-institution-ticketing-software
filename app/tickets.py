@@ -55,7 +55,7 @@ def update_ticket_status(ticket_id: int, status: str, notes: str):
     Update ticket status.
     """
 
-    ticket = update_ticket(status, ticket_id)
+    ticket = update_ticket(ticket_id, status)
     return ticket
 
 
@@ -67,29 +67,30 @@ def search_tickets(tickets, filters):
     category_filter = filters[1]
     before_date = filters[2]
     after_date = filters[3]
+    department = filters[4]
     filtered = tickets
 
     if status_filter != "":
         filtered = [t for t in filtered if t["status"] == status_filter]
-    else:
-        print(f"Status Filter: {status_filter}")
 
     if category_filter != "":
         filtered = [t for t in filtered if t["category"]
                     == category_filter]
-    else:
-        print(f"Category Filter: {category_filter}")
-
+        
     if before_date != "":
         cutoff = datetime.strptime(before_date, "%Y-%m-%d").date()
         filtered = [t for t in filtered
                     if datetime.strptime(t["created_at"], "%Y-%m-%d %H:%M:%S").date() < cutoff]
-
+        
     if after_date != "":
         cutoff = datetime.strptime(after_date, "%Y-%m-%d").date()
         filtered = [t for t in filtered
                     if datetime.strptime(t["created_at"], "%Y-%m-%d %H:%M:%S").date() > cutoff]
-
+    
+    if department not in ["", None]:
+        filtered = [t for t in filtered
+                    if t["category"] == department]
+        
     return filtered
 
 
