@@ -100,6 +100,9 @@ def dashboard():
             (status_filter, category_filter, date_before, date_after)
         )
 
+        filtered = app.tickets.filter_active_tickets(filtered)
+
+
     finally:
         connection.close()
 
