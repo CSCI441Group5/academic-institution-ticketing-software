@@ -91,3 +91,11 @@ def search_tickets(tickets, filters):
                     if datetime.strptime(t["created_at"], "%Y-%m-%d %H:%M:%S").date() > cutoff]
 
     return filtered
+
+
+def filter_archived_tickets(tickets):
+    return [t for t in tickets if t["status"] == "Closed"]
+
+
+def filter_active_tickets(tickets):
+    return [t for t in tickets if t["status"] != "Closed"]
