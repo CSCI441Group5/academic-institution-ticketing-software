@@ -178,6 +178,8 @@ def archive():
     try:
         user_role = session.get("user_role")
         user_id = session.get("user_account_id")
+        department = session.get("department")
+
 
         if user_role in ["staff", "manager"]:
             query = """
@@ -199,7 +201,7 @@ def archive():
 
         filtered = app.tickets.search_tickets(
             tickets,
-            (status_filter, category_filter, date_before, date_after)
+            (status_filter, category_filter, date_before, date_after, department)
         )
 
         filtered = app.tickets.filter_archived_tickets(filtered)
