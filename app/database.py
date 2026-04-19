@@ -29,7 +29,7 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
             """
 )
 
-    # Create university accounts table
+    # Create university accounts table if it does not already exist
     connection.execute(
       """
         CREATE TABLE IF NOT EXISTS UniversityAccount (
@@ -38,10 +38,26 @@ def _ensure_schema(connection: sqlite3.Connection) -> None:
             password_hash TEXT NOT NULL,               -- password hashed
             full_name TEXT NOT NULL,                   -- name of account owner
             role TEXT NOT NULL,                        -- student staff or manager
-            department TEXT NOT NULL                   -- IT Facilities or Academic Support
+            department TEXT NOT NULL DEFAULT ''        -- IT Facilities or Academic Support
         )
        """
     )
+
+    # Add missing department column to UniversityAccount if it doesn't exist
+    cursor = connection.execute("PRAGMA table_info(UniversityAccount)")
+    columns = [row[1] for row in cursor.fetchall()]
+    if "department" not in columns:
+        connection.execute(
+            "ALTER TABLE UniversityAccount ADD COLUMN department TEXT NOT NULL DEFAULT ''"
+        )
+
+    # Add missing claimed_by column to tickets if it doesn't exist
+    cursor = connection.execute("PRAGMA table_info(tickets)")
+    columns = [row[1] for row in cursor.fetchall()]
+    if "claimed_by" not in columns:
+        connection.execute(
+            "ALTER TABLE tickets ADD COLUMN claimed_by TEXT DEFAULT ''"
+        )
 
     connection.commit()
 
@@ -134,6 +150,25 @@ def get_university_account_by_email(email):
             (email.strip(),),
         )
 
+        return cursor.fetchone()
+    finally:
+        connection.close()
+
+
+def get_university_account_by_id(account_id):
+    """Retrieve university account by account ID."""
+
+    connection = connect_db()
+
+    try:
+        cursor = connection.execute(
+            """
+            SELECT id, email, password_hash, full_name, role, department
+            FROM UniversityAccount
+            WHERE id = ?
+            """,
+            (account_id,),
+        )
         return cursor.fetchone()
     finally:
         connection.close()

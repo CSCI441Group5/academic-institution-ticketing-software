@@ -4,6 +4,7 @@
 from flask import Blueprint, redirect, render_template, request, session, url_for
 import app.auth.service
 import app.database
+import app.notifications
 import app.tickets
 
 # Create a blueprint named "auth"
@@ -197,6 +198,11 @@ def new_ticket():
                     "status": "Pending",
                 }
             )
+
+            requester_email = session.get("user_email")
+            if requester_email:
+                app.notifications.send_ticket_confirmation(requester_email, new_id)
+
             # Redirect after POST avoids duplicate ticket creation on refresh
             return redirect(
                 url_for("auth.new_ticket", success="1", ticket_id=new_id)
@@ -222,8 +228,14 @@ def update_ticket(ticket_id):
     # Reads the edited fields from the dashboard form
     status = request.form["status"]
     claimed_by = request.form["claimed_by"]
-    # Current update path only changes status and ownership
     app.database.update_ticket(ticket_id, status, claimed_by)
+
+    ticket = app.database.get_ticket(ticket_id)
+    if ticket is not None and ticket["requester_account_id"]:
+        account = app.database.get_university_account_by_id(ticket["requester_account_id"])
+        if account is not None:
+            app.notifications.send_status_update(account["email"], ticket_id, status)
+
     return redirect(url_for("auth.staff_dashboard"))
 
 @auth_bp.route("/tickets/<int:ticket_id>/claim", methods=["POST"])
