@@ -92,3 +92,11 @@ def search_tickets(tickets, filters):
                     if t["category"] == department]
         
     return filtered
+
+
+def filter_archived_tickets(tickets):
+    return [t for t in tickets if t["status"] == "Closed"]
+
+
+def filter_active_tickets(tickets):
+    return [t for t in tickets if t["status"] != "Closed"]

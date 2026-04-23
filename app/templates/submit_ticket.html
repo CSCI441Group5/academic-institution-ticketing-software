@@ -9,8 +9,9 @@
         <!-- Loads the CSS file from Flask’s static folder -->
         <link
             rel="stylesheet"
-            href="{{ url_for('static', filename='styles.css') }}"
+            href="{{ url_for('static', filename='css/styles.css') }}"
         />
+        
     </head>
     <body>
         <section>
@@ -66,5 +67,6 @@
                 <a href="{{ url_for('auth.dashboard') }}">Back to Dashboard</a>
             </p>
         </section>
+        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
     </body>
 </html>

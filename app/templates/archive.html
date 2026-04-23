@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Archived Tickets - Automated School Ticketing System</title>
+
+       
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='styles.css') }}"
+        />
+       
+    </head>
+    <body>
+        <h2>
+            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }}) ({{session.get("user_account_id") }})
+        </h2>
+        <form action="{{ url_for('auth.logout') }}" method="POST">
+            <button type="submit">Sign Out</button>
+        </form>
+
+         <!-- Light/Dark Theme Toggle Button-->
+        <button id="theme-toggle">Toggle Theme</button>
+
+        <!-- Text font size toggle buttons -->
+        <div>
+           <button id="text-smaller">A-</button>
+           <button id="text-reset">A</button>
+           <button id="text-bigger">A+</button>
+        </div>
+
+        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+
+        <h1>Archived Tickets</h1>
+        <p>
+            <a href="{{ url_for('auth.dashboard') }}">
+                <button type="button">Back To Dashboard</button>
+            </a>
+        </p>
+
+        <form method="get" id="filters">
+            <p>Filter By:</p>
+
+            <div>
+                <p>Date:</p>
+                <label>After:</label>
+                <input type="date" id="date_after", name="date_after", value="{{date_after}}">
+
+                <label>Before:</label>
+                <input type="date" id="date_before", name="date_before", value="{{date_before}}">
+            </div>
+            <button type="submit">Filter</button>
+        </p>
+        </form>
+
+        {% if tickets %}
+            {% for ticket in tickets %}
+                <hr />
+                <p><strong>{{ ticket["title"] }}</strong></p>
+                <p>Ticket ID: {{ ticket["id"] }}</p>
+                <p>Submission Date: {{ ticket["created_at"] }}</p>
+                <p>Status: {{ ticket["status"] }}</p>
+                <p>Category: {{ ticket["category"] }}</p>
+                <p>Description: {{ ticket["description"] }}</p>
+            {% endfor %}
+        {% else %}
+            <p>No archived tickets found.</p>
+        {% endif %}
+    </body>
+</html>

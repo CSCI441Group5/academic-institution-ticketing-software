@@ -143,6 +143,9 @@ def get_ticket_data(department = None):
             (status_filter, category_filter, date_before, date_after, department)
         )
 
+        filtered = app.tickets.filter_active_tickets(filtered)
+
+
     finally:
         # Close DB connection after the dashboard data is loaded
         connection.close()
@@ -161,6 +164,59 @@ def get_staff_accounts(department):
     
     params = (department,)
     accounts = connection.execute(query, params).fetchall()
+    return accounts
+
+@auth_bp.route("/archive")
+def archive():
+    # Pull tickets from database so archive page can render closed tickets.
+    # Staff/managers can view all tickets; students can only view their own.
+    connection = app.database.connect_db()
+
+    status_filter = request.args.get("status_filter", "")
+    category_filter = request.args.get("category_filter", "")
+    date_before = request.args.get("date_before", "")
+    date_after = request.args.get("date_after", "")
+
+    try:
+        user_role = session.get("user_role")
+        user_id = session.get("user_account_id")
+
+        if user_role in ["staff", "manager"]:
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                ORDER BY id DESC
+            """
+            params = ()
+        else:
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                WHERE requester_account_id = ?
+                ORDER BY id DESC
+            """
+            params = (user_id,)
+
+        tickets = connection.execute(query, params).fetchall()
+
+        filtered = app.tickets.search_tickets(
+            tickets,
+            (status_filter, category_filter, date_before, date_after)
+        )
+
+        filtered = app.tickets.filter_archived_tickets(filtered)
+
+    finally:
+        connection.close()
+
+    return render_template(
+        "archive.html",
+        tickets=filtered,
+        status_filter=status_filter,
+        category_filter=category_filter,
+        date_before=date_before,
+        date_after=date_after
+    )
 
     connection.close()
     
