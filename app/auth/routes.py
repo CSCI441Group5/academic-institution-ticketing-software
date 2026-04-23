@@ -163,6 +163,7 @@ def get_staff_accounts(department):
     
     params = (department,)
     accounts = connection.execute(query, params).fetchall()
+    return accounts
 
 @auth_bp.route("/archive")
 def archive():
