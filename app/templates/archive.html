@@ -3,10 +3,14 @@
     <head>
         <meta charset="UTF-8" />
         <title>Archived Tickets - Automated School Ticketing System</title>
+
+       
+
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='styles.css') }}"
         />
+       
     </head>
     <body>
         <h2>
@@ -15,6 +19,18 @@
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
         </form>
+
+         <!-- Light/Dark Theme Toggle Button-->
+        <button id="theme-toggle">Toggle Theme</button>
+
+        <!-- Text font size toggle buttons -->
+        <div>
+           <button id="text-smaller">A-</button>
+           <button id="text-reset">A</button>
+           <button id="text-bigger">A+</button>
+        </div>
+
+        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
 
         <h1>Archived Tickets</h1>
         <p>
