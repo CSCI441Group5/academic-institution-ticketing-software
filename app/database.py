@@ -159,7 +159,20 @@ def save_university_account(account_data):
         # Using IGNORE for safer startup seeding
         connection.execute(query, params)
 
+        query = """
+                SELECT * FROM UniversityAccount
+                """
+        
+        params = []
+
+        accounts = connection.execute(query, params)
+        for account in accounts:
+            print(account["email"])
+            print(account["password_hash"])
+
         connection.commit()
+
+
     finally:
         connection.close()
 

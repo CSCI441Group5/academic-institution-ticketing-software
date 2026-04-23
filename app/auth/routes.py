@@ -1,6 +1,7 @@
 # URL routes
 # Main request flow for login, dashboard display, ticket submit, and ticket update
 
+from werkzeug.security import generate_password_hash
 from flask import Blueprint, redirect, render_template, request, session, url_for
 import app.auth.service
 import app.database
@@ -207,6 +208,45 @@ def new_ticket():
         error=error,
         success=success,
         ticket_id=ticket_id,
+    )
+
+@auth_bp.route("/new_account", methods = ["GET"])
+def create_account():
+    return render_template("create_account.html")
+
+@auth_bp.route("/create_new_account", methods = ["GET", "POST"])
+def create_new_account():
+    # Optional UI messages after submission or validation failure
+    error = None
+    success = request.args.get("success") == "1"
+
+    if request.method == "POST":
+        # Pull and sanitize form values
+        email = request.form.get("user_name", "").strip()
+        password = request.form.get("password", "").strip()
+        full_name = request.form.get("full_name", "").strip()
+        role = request.form.get("role", "").strip()
+        department = request.form.get("department", "").strip()
+
+        if not email or not password or not full_name or not role:
+            # Basic required-field check before DB insert
+            error = "Username, Password, Name, and Role are required."
+        else:
+            # Save new account
+            app.database.save_university_account(
+                {
+                    "email": email,
+                    "password_hash": generate_password_hash(password),
+                    "full_name": full_name,
+                    "role": role,
+                    "department": department,
+                }
+            )
+
+    return render_template(
+        "university_login.html",
+        error=error,
+        success=success
     )
 
 
