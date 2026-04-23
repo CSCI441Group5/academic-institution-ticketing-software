@@ -68,6 +68,7 @@ def search_tickets(tickets, filters):
     before_date = filters[2]
     after_date = filters[3]
     department = filters[4]
+    keyword = filters[5] if len(filters) > 5 else ""
     filtered = tickets
 
     if status_filter != "":
@@ -90,6 +91,10 @@ def search_tickets(tickets, filters):
     if department not in ["", None]:
         filtered = [t for t in filtered
                     if t["category"] == department]
+    
+    if keyword != "":
+        keyword_lower = keyword.lower()
+        filtered = [t for t in filtered if keyword_lower in t["title"].lower() or keyword_lower in t["description"].lower()]
         
     return filtered
 

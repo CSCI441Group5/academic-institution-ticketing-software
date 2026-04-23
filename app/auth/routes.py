@@ -73,7 +73,8 @@ def dashboard():
                            status_filter=session_data[1],
                            category_filter=session_data[2],
                            date_before=session_data[3],
-                           date_after=session_data[4])
+                           date_after=session_data[4],
+                           keyword=session_data[5])
     
 @auth_bp.route("/staff_dashboard")
 def staff_dashboard():
@@ -96,6 +97,7 @@ def staff_dashboard():
                            category_filter=session_data[2],
                            date_before=session_data[3],
                            date_after=session_data[4],
+                           keyword=session_data[5],
                            staff = staff_names)
 
 # This function is not a route, it does not return a render_template
@@ -107,6 +109,7 @@ def get_ticket_data(department = None):
     category_filter = request.args.get("category_filter", "")
     date_before = request.args.get("date_before", "")
     date_after = request.args.get("date_after", "")
+    keyword = request.args.get("keyword", "")
 
     try:
         # Session values decide whether to show all tickets or just this user's tickets
@@ -139,7 +142,7 @@ def get_ticket_data(department = None):
         # Filter helper narrows the list after the query runs
         filtered = app.tickets.search_tickets(
             tickets,
-            (status_filter, category_filter, date_before, date_after, department)
+            (status_filter, category_filter, date_before, date_after, department, keyword)
         )
 
         filtered = app.tickets.filter_active_tickets(filtered)
@@ -149,7 +152,7 @@ def get_ticket_data(department = None):
         # Close DB connection after the dashboard data is loaded
         connection.close()
 
-    return [filtered, status_filter, category_filter, date_before, date_after]
+    return [filtered, status_filter, category_filter, date_before, date_after, keyword]
 
 # Not a route
 def get_staff_accounts(department):
@@ -163,6 +166,7 @@ def get_staff_accounts(department):
     
     params = (department,)
     accounts = connection.execute(query, params).fetchall()
+    return accounts
 
 @auth_bp.route("/archive")
 def archive():
@@ -174,6 +178,7 @@ def archive():
     category_filter = request.args.get("category_filter", "")
     date_before = request.args.get("date_before", "")
     date_after = request.args.get("date_after", "")
+    keyword = request.args.get("keyword", "")
 
     try:
         user_role = session.get("user_role")
@@ -199,7 +204,7 @@ def archive():
 
         filtered = app.tickets.search_tickets(
             tickets,
-            (status_filter, category_filter, date_before, date_after)
+            (status_filter, category_filter, date_before, date_after, None, keyword)
         )
 
         filtered = app.tickets.filter_archived_tickets(filtered)
@@ -213,7 +218,8 @@ def archive():
         status_filter=status_filter,
         category_filter=category_filter,
         date_before=date_before,
-        date_after=date_after
+        date_after=date_after,
+        keyword=keyword
     )
 
     connection.close()
