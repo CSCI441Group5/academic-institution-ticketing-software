@@ -25,6 +25,11 @@
     </head>
     <body>
         <h1>User Tickets</h1>
+        <p>
+            <a href="{{ url_for('auth.archive') }}">
+                <button type="button">Go To Archives</button>
+            </a>
+        </p>
         <form method="get" id="filters">
             <p>Filter By:</p>
             <div>

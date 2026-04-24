@@ -34,9 +34,15 @@
 
         <h1>Archived Tickets</h1>
         <p>
+            {% if session.get("user_role") in ["staff", "manager"] %}
+            <a href="{{ url_for('auth.staff_dashboard') }}">
+                <button type="button">Back To Dashboard</button>
+            </a>
+            {% else %}
             <a href="{{ url_for('auth.dashboard') }}">
                 <button type="button">Back To Dashboard</button>
             </a>
+            {% endif %}
         </p>
 
         <form method="get" id="filters">
