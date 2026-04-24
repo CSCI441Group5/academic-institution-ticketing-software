@@ -162,9 +162,12 @@ def get_staff_accounts(department):
                 WHERE role == "staff"
                 AND department = ?
             """
-    
+
     params = (department,)
     accounts = connection.execute(query, params).fetchall()
+
+    connection.close()
+
     return accounts
 
 @auth_bp.route("/archive")
@@ -202,7 +205,7 @@ def archive():
 
         filtered = app.tickets.search_tickets(
             tickets,
-            (status_filter, category_filter, date_before, date_after)
+            (status_filter, category_filter, date_before, date_after, None)
         )
 
         filtered = app.tickets.filter_archived_tickets(filtered)
@@ -218,10 +221,6 @@ def archive():
         date_before=date_before,
         date_after=date_after
     )
-
-    connection.close()
-    
-    return accounts
 
 # Handles ticket form display and submission
 # GET shows the form
