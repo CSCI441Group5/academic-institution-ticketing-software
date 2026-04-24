@@ -57,13 +57,13 @@
                 <p>Date:</p>
                 <label>After:</label>
                 <input type="date" id="date_after" name="date_after" value=
-                {%if date_after is regex('\d{4}-\d{2}-\d{2}$') %}
+                {%if date_after is regex('\\d{4}-\\d{2}-\\d{2}$') %}
                     {{date_after}}
                 {%endif%}>
 
                 <label>Before:</label>
                 <input type="date" id="date_before" name="date_before" value=
-                {%if date_before is regex('\d{4}-\d{2}-\d{2}$') %}
+                {%if date_before is regex('\\d{4}-\\d{2}-\\d{2}$') %}
                     {{date_before}}
                 {%endif%}>
             </div>
