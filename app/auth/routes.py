@@ -89,7 +89,10 @@ def staff_dashboard():
             department = ticket['category']
             staff_names = get_staff_accounts(department)
     
-    department = session.get("department")
+    # Staff only see their department. Managers see all departments.
+    department = None
+    if session.get("user_role") == "staff":
+        department = session.get("department")
     session_data = get_ticket_data(department)
 
     return render_template("staff_dashboard.html", 
@@ -173,7 +176,7 @@ def get_staff_accounts(department):
 @auth_bp.route("/archive")
 def archive():
     # Pull tickets from database so archive page can render closed tickets.
-    # Staff/managers can view all tickets; students can only view their own.
+    # Staff can view their department's tickets; managers can view all; students can only view their own.
     connection = app.database.connect_db()
 
     status_filter = request.args.get("status_filter", "")
@@ -202,10 +205,13 @@ def archive():
             params = (user_id,)
 
         tickets = connection.execute(query, params).fetchall()
+        department = None
+        if user_role == "staff":
+            department = session.get("department")
 
         filtered = app.tickets.search_tickets(
             tickets,
-            (status_filter, category_filter, date_before, date_after, None)
+            (status_filter, category_filter, date_before, date_after, department)
         )
 
         filtered = app.tickets.filter_archived_tickets(filtered)
