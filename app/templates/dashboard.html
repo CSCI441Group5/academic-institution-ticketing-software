@@ -3,6 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <title>Dashboard - Automated School Ticketing System</title>
+
+        
+
         <!-- Loads the CSS file from Flask’s static folder -->
         <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
     </head>
@@ -14,16 +17,8 @@
             <button type="submit">Sign Out</button>
         </form>
 
-        <h1>My Tickets</h1>
-        <p>
-            <a href="{{ url_for('auth.new_ticket') }}">
-                <button type="button">Create New Ticket</button>
-            </a>
-        </p>
-
         <!-- Light/Dark Theme Toggle Button-->
         <button id="theme-toggle">Toggle Theme</button>
-        
 
         <!-- Text font size toggle buttons -->
         <div>
@@ -34,6 +29,18 @@
 
         <script src="{{url_for('static', filename='js/theme.js')}}"></script>
 
+        <h1>My Tickets</h1>
+        <p>
+            <a href="{{ url_for('auth.new_ticket') }}">
+                <button type="button">Create New Ticket</button>
+            </a>
+        </p>
+        <p>
+            <a href="{{ url_for('auth.archive') }}">
+                <button type="button">Go To Archives</button>
+            </a>
+        </p>
+
         <form method="get" id="filters">
             <p>Filter By:</p>
             <div>
@@ -43,7 +50,6 @@
                     <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
                     <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
                     <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
-                    <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
                 </select>
             </div>
 

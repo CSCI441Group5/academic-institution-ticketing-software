@@ -1,6 +1,7 @@
 # URL routes
 # Main request flow for login, dashboard display, ticket submit, and ticket update
 
+from werkzeug.security import generate_password_hash
 from flask import Blueprint, redirect, render_template, request, session, url_for
 import app.auth.service
 import app.database
@@ -143,6 +144,9 @@ def get_ticket_data(department = None):
             (status_filter, category_filter, date_before, date_after, department)
         )
 
+        filtered = app.tickets.filter_active_tickets(filtered)
+
+
     finally:
         # Close DB connection after the dashboard data is loaded
         connection.close()
@@ -161,6 +165,59 @@ def get_staff_accounts(department):
     
     params = (department,)
     accounts = connection.execute(query, params).fetchall()
+    return accounts
+
+@auth_bp.route("/archive")
+def archive():
+    # Pull tickets from database so archive page can render closed tickets.
+    # Staff/managers can view all tickets; students can only view their own.
+    connection = app.database.connect_db()
+
+    status_filter = request.args.get("status_filter", "")
+    category_filter = request.args.get("category_filter", "")
+    date_before = request.args.get("date_before", "")
+    date_after = request.args.get("date_after", "")
+
+    try:
+        user_role = session.get("user_role")
+        user_id = session.get("user_account_id")
+
+        if user_role in ["staff", "manager"]:
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                ORDER BY id DESC
+            """
+            params = ()
+        else:
+            query = """
+                SELECT id, title, category, description, status, created_at
+                FROM tickets
+                WHERE requester_account_id = ?
+                ORDER BY id DESC
+            """
+            params = (user_id,)
+
+        tickets = connection.execute(query, params).fetchall()
+
+        filtered = app.tickets.search_tickets(
+            tickets,
+            (status_filter, category_filter, date_before, date_after)
+        )
+
+        filtered = app.tickets.filter_archived_tickets(filtered)
+
+    finally:
+        connection.close()
+
+    return render_template(
+        "archive.html",
+        tickets=filtered,
+        status_filter=status_filter,
+        category_filter=category_filter,
+        date_before=date_before,
+        date_after=date_after
+    )
 
     connection.close()
     
@@ -213,6 +270,45 @@ def new_ticket():
         error=error,
         success=success,
         ticket_id=ticket_id,
+    )
+
+@auth_bp.route("/new_account", methods = ["GET"])
+def create_account():
+    return render_template("create_account.html")
+
+@auth_bp.route("/create_new_account", methods = ["GET", "POST"])
+def create_new_account():
+    # Optional UI messages after submission or validation failure
+    error = None
+    success = request.args.get("success") == "1"
+
+    if request.method == "POST":
+        # Pull and sanitize form values
+        email = request.form.get("user_name", "").strip()
+        password = request.form.get("password", "").strip()
+        full_name = request.form.get("full_name", "").strip()
+        role = request.form.get("role", "").strip()
+        department = request.form.get("department", "").strip()
+
+        if not email or not password or not full_name or not role:
+            # Basic required-field check before DB insert
+            error = "Username, Password, Name, and Role are required."
+        else:
+            # Save new account
+            app.database.save_university_account(
+                {
+                    "email": email,
+                    "password_hash": generate_password_hash(password),
+                    "full_name": full_name,
+                    "role": role,
+                    "department": department,
+                }
+            )
+
+    return render_template(
+        "university_login.html",
+        error=error,
+        success=success
     )
 
 

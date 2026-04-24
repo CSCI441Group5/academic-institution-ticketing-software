@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Create Account</title>
+        <!-- Loads the CSS file from Flask’s static folder -->
+        <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+    </head>
+    <body>
+        <!-- Light/Dark Theme Toggle Button-->
+        <button id="theme-toggle">Toggle Theme</button>
+        
+        <!-- Text font size toggle buttons -->
+        <div>
+           <button id="text-smaller">A-</button>
+           <button id="text-reset">A</button>
+           <button id="text-bigger">A+</button>
+        </div>
+
+        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+
+        <form action="{{ url_for('auth.create_new_account') }}" method="POST" id="account_form">
+            <div>
+                <label>Email:</label>
+                <input type="text" id="user_name" name="user_name" required>
+            </div>
+            <div id="error_message" style="color: red; display:none"></div>
+            
+            <div>
+                <label>Name:</label>
+                <input type="text" id="full_name" name="full_name" required>
+            </div>
+            
+
+            <div>
+                <label>Password:</label>
+                <input type="text" id="password" name="password" required>
+            </div>
+
+            <div>
+                <label>Role:</label>
+                <select id="role" name="role" required>
+                    <option value="Student">Student</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Manager">Manager</option>
+                </select>
+            </div>
+
+            <div id="department" name="department" style="display: none;">
+                <label>Department:</label>
+                <select>
+                    <option value="">None</option>
+                    <option value="IT">IT</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Academic Support">Academic Support</option>
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" id="submit_button">Create</button>
+            </div>
+        </form>
+    </body>
+
+    <script>
+            document.getElementById("role").addEventListener("change", function(){
+                const selected = this.value;
+                const deptDiv = document.getElementById("department");
+
+                if (selected == "Staff" || selected == "Manager"){
+                    deptDiv.style.display = "block";
+                }
+                else{
+                    deptDiv.style.display = "None";
+                }
+            });
+
+            document.getElementById("account_form").addEventListener("submit", function(event){
+                const emailInput = document.getElementById("user_name").value;
+                const errorBox = document.getElementById("error_message");
+
+                //Regex pattern
+                const pattern= /^[a-zA-Z0-9._%+-]+@parkfield\.edu$/;
+
+                //Check if email matches Regex
+                if(!pattern.test(emailInput)){
+                    event.preventDefault();//prevent Submission
+                    errorBox.textContent = "Please input an email in the form 'username@parkfield.edu'.";
+                    errorBox.style.display = "block";
+                }else{
+                    errorBox.style.display = "none";
+                }
+            });
+        </script>
+</html>

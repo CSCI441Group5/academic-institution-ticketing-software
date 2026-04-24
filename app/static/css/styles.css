@@ -64,3 +64,8 @@ body {
     --text: #e0e0e0;
     --primary: #4da3ff;
 }
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
