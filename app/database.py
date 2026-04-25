@@ -121,6 +121,21 @@ def save_ticket(ticket_data):
         connection.close()
 
 
+def update_ticket_attachment(ticket_id, attachment_ref):
+    """Store the saved attachment reference for an existing ticket."""
+
+    connection = connect_db()
+
+    try:
+        connection.execute(
+            "UPDATE tickets SET attachment = ? WHERE id = ?",
+            (attachment_ref, ticket_id),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
+
 def get_ticket_count():
     """Return the current number of ticket rows."""
 
