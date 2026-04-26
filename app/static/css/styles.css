@@ -3,11 +3,47 @@
 body {
     margin: 0;
     min-height: 100vh;
-    place-items: left;
-
     background: var(--bg);
     color: var(--text);
     font-size: var(--font-size);
+    font-family: Arial, sans-serif;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+#filters {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 15px;
+    margin: 15px;
+    border-radius: 8px;
+}
+
+h1, h2 {
+    color: var(--primary);
+    margin-left: 10px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}
+
+p {
+    margin: 5px 10px;
 }
 
 .login-menu {
@@ -52,17 +88,29 @@ body {
 }
 
 :root{
-    --bg: #ffffff;
-    --text: #000000;
-    --primary: #0066ff;
+    --bg: #f4f6f9;
+    --text: #1f2937;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+
+    --accent: #10b981;
+    --card-bg: #ffffff;
+    --border: #e5e7eb;
 
     --font-size: 16px;
 }
 
 [data-theme="dark"]{
     --bg: #121212;
-    --text: #e0e0e0;
+    --text: #e5e7eb;
+
     --primary: #4da3ff;
+    --primary-hover: #1e90ff;
+
+    --accent: #34d399;
+    --card-bg: #1e1e1e;
+    --border: #333;
 }
 
 .disabled {
