@@ -124,15 +124,19 @@ def save_ticket(ticket_data):
 def update_ticket_attachment(ticket_id, attachment_ref):
     """Store the saved attachment reference for an existing ticket."""
 
+    # Open database connection
     connection = connect_db()
 
     try:
+        # Save the server-side attachment reference on the ticket row
         connection.execute(
             "UPDATE tickets SET attachment = ? WHERE id = ?",
             (attachment_ref, ticket_id),
         )
+        # Save changes
         connection.commit()
     finally:
+        # Always close database connection
         connection.close()
 
 
