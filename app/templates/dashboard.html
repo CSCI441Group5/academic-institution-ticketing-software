@@ -1,129 +1,139 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Dashboard - Automated School Ticketing System</title>
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard - Automated School Ticketing System</title>
 
-        
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+</head>
 
-        <!-- Loads the CSS file from Flask’s static folder -->
-        <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
-    </head>
-    <body>
-      <div class="header">
-    <h2>
-        Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
-    </h2>
+<body>
+<div class="page-container">
 
-    <img src="{{ url_for('static', filename='images/university logo.png') }}" alt="University Logo" class="logo">
-  </div>
+    <!-- Header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" 
+             alt="University Logo" 
+             class="logo">
+
+        <h2>
+            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
+        </h2>
+    </div>
+
+    <!-- Control Panel (Top Right) -->
+    <div class="control-panel">
+        <button id="theme-toggle">Toggle Theme</button>
+        <button id="text-bigger">A+</button>
+        <button id="text-reset">A</button>
+        <button id="text-smaller">A-</button>
+
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
         </form>
+    </div>
 
-        <!-- Light/Dark Theme Toggle Button-->
-        <button id="theme-toggle">Toggle Theme</button>
+    <script src="{{url_for('static', filename='js/theme.js')}}"></script>
 
-        <!-- Text font size toggle buttons -->
+    <h1>My Tickets</h1>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+        <a href="{{ url_for('auth.new_ticket') }}">
+            <button type="button">Create New Ticket</button>
+        </a>
+
+        <a href="{{ url_for('auth.archive') }}">
+            <button type="button">Go To Archives</button>
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <form method="get" id="filters">
+        <p><strong>Filter By:</strong></p>
+
         <div>
-           <button id="text-smaller">A-</button>
-           <button id="text-reset">A</button>
-           <button id="text-bigger">A+</button>
+            <label>Status</label>
+            <select name="status_filter" id="status_filter">
+                <option value="">All</option>
+                <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
+                <option value="In Progress" {% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
+                <option value="Resolved" {% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
+            </select>
         </div>
 
-        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+        <div>
+            <label>Category</label>
+            <select name="category_filter" id="category_filter">
+                <option value="">All</option>
+                <option value="IT" {% if category_filter == "IT"%}selected {%endif%}>IT</option>
+                <option value="Facilities" {% if category_filter == "Facilities"%}selected {%endif%}>Facilities</option>
+                <option value="Academic Support" {% if category_filter == "Academic Support"%}selected {%endif%}>Academic Support</option>
+            </select>
+        </div>
 
-        <h1>My Tickets</h1>
-        <p>
-            <a href="{{ url_for('auth.new_ticket') }}">
-                <button type="button">Create New Ticket</button>
-            </a>
-        </p>
-        <p>
-            <a href="{{ url_for('auth.archive') }}">
-                <button type="button">Go To Archives</button>
-            </a>
-        </p>
+        <div>
+            <p>Date:</p>
 
-        <form method="get" id="filters">
-            <p>Filter By:</p>
-            <div>
-                <label>Status</label>
-                <select name="status_filter" id="status_filter">
-                    <option value="">All</option>
-                    <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
-                    <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
-                    <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
-                </select>
-            </div>
+            <label>After:</label>
+            <input type="date" id="date_after" name="date_after"
+                value="{% if date_after is regex('\\d{4}-\\d{2}-\\d{2}$') %}{{date_after}}{% endif %}">
 
-            <div>
-                <label>Category</label>
-                <select name="category_filter" id="category_filter">
-                    <option value="">All</option>
-                    <option value="IT"{% if category_filter == "IT"%}selected {%endif%}>IT</option>
-                    <option value="Facilities"{% if category_filter == "Facilities"%}selected {%endif%}>Facilities</option>
-                    <option value="Academic Support"{% if category_filter == "Academic Support"%}selected {%endif%}>Academic Support</option>
-                </select>
-            </div>
+            <label>Before:</label>
+            <input type="date" id="date_before" name="date_before"
+                value="{% if date_before is regex('\\d{4}-\\d{2}-\\d{2}$') %}{{date_before}}{% endif %}">
+        </div>
 
-            <div>
-                <p>Date:</p>
-                <label>After:</label>
-                <input type="date" id="date_after" name="date_after" value=
-                {%if date_after is regex('\\d{4}-\\d{2}-\\d{2}$') %}
-                    {{date_after}}
-                {%endif%}>
+        <button type="submit">Filter</button>
+    </form>
 
-                <label>Before:</label>
-                <input type="date" id="date_before" name="date_before" value=
-                {%if date_before is regex('\\d{4}-\\d{2}-\\d{2}$') %}
-                    {{date_before}}
-                {%endif%}>
-            </div>
-            <button type="submit">Filter</button>
-        </p>
-        </form>
+    <!-- Tickets -->
+    {% if tickets %}
+        {% for ticket in tickets %}
+            <hr />
 
-        <!-- If tickets exist, render each one -->
-        {% if tickets %} {% for ticket in tickets %}
-                <hr />
             {% if request.args.get("edit") == ticket["id"]|string %}
-                <form method="POST", action = "/tickets/{{ticket['id']}}/update">
+                <form method="POST" action="/tickets/{{ticket['id']}}/update">
                     <p><strong>{{ ticket["title"] }}</strong></p>
+
                     <div>
                         <p>Ticket ID: {{ ticket.id }}</p>
                         <p>Submission Date: {{ ticket.created_at }}</p>
                     </div>
+
                     <div>
                         <label>Status:</label>
-                        <select type="select" name="status">
-                            <option value="Open" {% if status_filter == "Open"%}selected {%endif%}>Open</option>
-                            <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
-                            <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
-                            <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
+                        <select name="status">
+                            <option value="Open">Open</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
                         </select>
                     </div>
+
                     <div>
                         <p>Category: {{ ticket.category }}</p>
                     </div>
+
                     <div>
                         <label>Description:</label>
                         <textarea name="description">{{ticket['description']}}</textarea>
                     </div>
+
                     <button type="submit">Save</button>
-            </form>
+                </form>
             {% else %}
-                <!--View Mode-->
                 <p>Ticket ID: {{ ticket["id"] }}</p>
                 <p>Submission Date: {{ ticket["created_at"] }}</p>
                 <p>Status: {{ ticket["status"] }}</p>
                 <p>Category: {{ ticket["category"] }}</p>
                 <p>Description: {{ ticket["description"] }}</p>
             {% endif %}
-        {% endfor %} {% else %}
-            <!-- Shown when no tickets have been submitted yet -->
-            <p>No tickets submitted yet.</p>
-        {% endif %}
-    </body>
+        {% endfor %}
+    {% else %}
+        <p>No tickets submitted yet.</p>
+    {% endif %}
+
+</div>
+</body>
 </html>
