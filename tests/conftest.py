@@ -16,7 +16,11 @@ def app(tmp_path, monkeypatch):
 
     # create the app and put it into test mode
     flask_app = create_app()
-    flask_app.config.update(TESTING=True)
+    # Tests should save uploaded files in a temporary folder
+    flask_app.config.update(
+        TESTING=True,
+        UPLOAD_FOLDER=tmp_path / "uploads",
+    )
 
     return flask_app
 

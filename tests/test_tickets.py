@@ -1,3 +1,6 @@
+import io
+from pathlib import Path
+
 import app.database as database
 
 
@@ -33,7 +36,7 @@ def create_ticket(
 
 # TC-4: Valid Ticket Submission
 # Verifies that a ticket with valid required fields is accepted and stored correctly
-def test_post_new_ticket_valid_student_request_saves_ticket(client, login):
+def test_post_new_ticket_valid_student_request_saves_ticket(client, login, app):
     # Sign in as a student because new tickets should be linked to the
     # currently logged-in requester
     login("student1@parkfield.edu")
@@ -48,7 +51,11 @@ def test_post_new_ticket_valid_student_request_saves_ticket(client, login):
             "title": "Cannot access lab printer",
             "category": "IT",
             "description": "The printer in the computer lab rejects my login.",
-            "attachment": "printer-error.png",
+            # Flask test client uses this tuple to upload a fake file
+            "attachment": (
+                io.BytesIO(b"fake image contents"),
+                "printer-error.png",
+            ),
         },
         follow_redirects=False,
     )
@@ -72,8 +79,44 @@ def test_post_new_ticket_valid_student_request_saves_ticket(client, login):
     assert ticket is not None
     assert ticket["category"] == "IT"
     assert ticket["description"] == "The printer in the computer lab rejects my login."
-    assert ticket["attachment"] == "printer-error.png"
+    assert ticket["attachment"] == f"uploads/ticket_{ticket['id']}_printer-error.png"
     assert ticket["requester_account_id"] == account_id("student1@parkfield.edu")
+
+    # Check that the uploaded file was saved in the server-side upload folder
+    saved_file = Path(app.config["UPLOAD_FOLDER"]) / Path(ticket["attachment"]).name
+    assert saved_file.exists()
+
+
+# TC-6: Invalid Attachment Handling
+# Verifies that unsupported or invalid attachments are rejected safely
+def test_post_new_ticket_invalid_attachment_type_does_not_save_ticket(client, login):
+    # Sign in as a student so the request acts like it came from a real user
+    login("student1@parkfield.edu")
+
+    # Counts how many tickets already exist before submitting the bad form
+    starting_count = database.get_ticket_count()
+
+    # Submit a ticket with an unsupported attachment extension
+    response = client.post(
+        "/tickets/new",
+        data={
+            "title": "Invalid attachment check",
+            "category": "IT",
+            "description": "This ticket should not save because the attachment is invalid.",
+            # .exe is not an allowed attachment type
+            "attachment": (
+                io.BytesIO(b"fake executable contents"),
+                "malware.exe",
+            ),
+        },
+        follow_redirects=False,
+    )
+
+    text = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Attachment must be a PNG, JPG, GIF, PDF, or TXT file." in text
+    assert database.get_ticket_count() == starting_count
 
 
 # TC-5: Ticket Submission With Missing Required Fields
@@ -270,4 +313,3 @@ def test_post_claim_ticket_unclaimed_ticket_sets_claimed_by_staff(client, login)
 
     # Check if claimed_by was saved as Carl
     assert ticket["claimed_by"] == "Carl"
-
