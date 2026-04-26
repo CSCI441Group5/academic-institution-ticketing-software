@@ -115,7 +115,7 @@ def test_post_new_ticket_invalid_attachment_type_does_not_save_ticket(client, lo
     text = response.get_data(as_text=True)
 
     assert response.status_code == 200
-    assert "Attachment must be a PNG, JPG, GIF, PDF, or TXT file." in text
+    assert "Attachment must be a PNG, JPG, or GIF image." in text
     assert database.get_ticket_count() == starting_count
 
 

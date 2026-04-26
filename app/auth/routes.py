@@ -16,7 +16,7 @@ import app.tickets
 auth_bp = Blueprint("auth", __name__)
 
 # File types allowed for ticket attachments
-ALLOWED_ATTACHMENT_EXTENSIONS = {"gif", "jpeg", "jpg", "pdf", "png", "txt"}
+ALLOWED_ATTACHMENT_EXTENSIONS = {"gif", "jpeg", "jpg", "png"}
 
 
 def is_allowed_attachment(filename):
@@ -271,7 +271,7 @@ def new_ticket():
             # Clean the uploaded filename before saving it on the server
             attachment_filename = secure_filename(attachment_file.filename)
             if not attachment_filename or not is_allowed_attachment(attachment_filename):
-                error = "Attachment must be a PNG, JPG, GIF, PDF, or TXT file."
+                error = "Attachment must be a PNG, JPG, or GIF image."
         
         if error is None:
             # Save new ticket and link it to the current session user when available
