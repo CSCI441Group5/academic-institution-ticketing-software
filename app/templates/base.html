@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Ticketing System{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/university logo.png') }}" class="logo">
+
+        <h2>
+            Signed in as: {{ session.get("user_full_name") }} ({{ session.get("user_role") }})
+        </h2>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <button id="theme-toggle">Toggle Theme</button>
+        <button id="text-bigger">A+</button>
+        <button id="text-reset">A</button>
+        <button id="text-smaller">A-</button>
+
+        <form action="{{ url_for('auth.logout') }}" method="POST">
+            <button type="submit">Sign Out</button>
+        </form>
+    </div>
+
+    <!-- Page Content Goes Here -->
+    {% block content %}{% endblock %}
+
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>
