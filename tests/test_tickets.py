@@ -3,6 +3,7 @@ from pathlib import Path
 
 import app.database as database
 
+# Covers TC-4 - TC-9, TC-13, TC-15
 
 # Helper function for looking up the seeded account ID by email
 # Tickets are linked to requester_account_id, so several tests need this
@@ -86,37 +87,10 @@ def test_post_new_ticket_valid_student_request_saves_ticket(client, login, app):
     saved_file = Path(app.config["UPLOAD_FOLDER"]) / Path(ticket["attachment"]).name
     assert saved_file.exists()
 
-
-# TC-6: Invalid Attachment Handling
-# Verifies that unsupported or invalid attachments are rejected safely
-def test_post_new_ticket_invalid_attachment_type_does_not_save_ticket(client, login):
-    # Sign in as a student so the request acts like it came from a real user
-    login("student1@parkfield.edu")
-
-    # Counts how many tickets already exist before submitting the bad form
-    starting_count = database.get_ticket_count()
-
-    # Submit a ticket with an unsupported attachment extension
-    response = client.post(
-        "/tickets/new",
-        data={
-            "title": "Invalid attachment check",
-            "category": "IT",
-            "description": "This ticket should not save because the attachment is invalid.",
-            # .exe is not an allowed attachment type
-            "attachment": (
-                io.BytesIO(b"fake executable contents"),
-                "malware.exe",
-            ),
-        },
-        follow_redirects=False,
-    )
-
-    text = response.get_data(as_text=True)
-
-    assert response.status_code == 200
-    assert "Attachment must be a PNG, JPG, or GIF image." in text
-    assert database.get_ticket_count() == starting_count
+    # Check that the saved attachment can be viewed through the ticket route
+    attachment_response = client.get(f"/tickets/{ticket['id']}/attachment")
+    assert attachment_response.status_code == 200
+    assert attachment_response.data == b"fake image contents"
 
 
 # TC-5: Ticket Submission With Missing Required Fields
@@ -145,6 +119,38 @@ def test_post_new_ticket_missing_title_does_not_save_ticket(client, login):
     # and the number of tickets should stay the same
     assert response.status_code == 200
     assert "Title, category, and description are required." in text
+    assert database.get_ticket_count() == starting_count
+
+# TC-6: Invalid Attachment Handling
+# Verifies that unsupported or invalid attachments are rejected safely, and 
+# that valid attachments are saved server-side while only their attachmentRef is stored with the ticket.
+def test_post_new_ticket_invalid_attachment_type_does_not_save_ticket(client, login):
+    # Sign in as a student so the request acts like it came from a real user
+    login("student1@parkfield.edu")
+
+    # Counts how many tickets already exist before submitting the bad form
+    starting_count = database.get_ticket_count()
+
+    # Submit a ticket with an unsupported attachment extension
+    response = client.post(
+        "/tickets/new",
+        data={
+            "title": "Invalid attachment check",
+            "category": "IT",
+            "description": "This ticket should not save because the attachment is invalid.",
+            # .exe is not an allowed attachment type
+            "attachment": (
+                io.BytesIO(b"fake executable contents"),
+                "malware.exe",
+            ),
+        },
+        follow_redirects=False,
+    )
+
+    text = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "Attachment must be a PNG, JPG, or GIF image." in text
     assert database.get_ticket_count() == starting_count
 
 
