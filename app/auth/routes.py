@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from flask import Blueprint, current_app, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, redirect, render_template, request, session, url_for, abort, send_from_directory
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 import app.auth.service
@@ -138,7 +138,7 @@ def get_ticket_data(department = None):
             # Staff/manager path
             # Loads every ticket so support roles can manage the full queue
             query = """
-                SELECT id, title, category, description, status, created_at, claimed_by
+                SELECT id, title, category, description, status, created_at, claimed_by, attachment
                 FROM tickets
                 ORDER BY id DESC
             """
@@ -147,7 +147,7 @@ def get_ticket_data(department = None):
             # Student path
             # Only loads tickets linked to the logged-in student's account ID
             query = """
-                SELECT id, title, category, description, status, created_at, claimed_by
+                SELECT id, title, category, description, status, created_at, claimed_by, attachment
                 FROM tickets
                 WHERE requester_account_id = ?
                 ORDER BY id DESC
@@ -188,6 +188,37 @@ def get_staff_accounts(department):
     connection.close()
 
     return accounts
+
+@auth_bp.get("/tickets/<int:ticket_id>/attachment")
+def view_attachment(ticket_id):
+    # Pull the ticket from the database
+    ticket = app.database.get_ticket(ticket_id)
+
+    if ticket is None or not ticket["attachment"]:
+        abort(404)
+
+    user_role = session.get("user_role")
+    user_id = session.get("user_account_id")
+
+    # Authorization rules
+    # Only allow access to permitted tickets
+    if user_role == "student" and ticket["requester_account_id"] != user_id:
+        abort(403)
+    if user_role == "staff" and ticket["category"] != session.get("department"):
+        abort(403)
+    if user_role not in ["student", "staff", "manager"]:
+        abort(403)
+
+    # Load the saved filename from the attachment reference
+    filename = Path(ticket["attachment"]).name
+    upload_dir = Path(
+        current_app.config.get(
+            "UPLOAD_FOLDER",
+            Path(current_app.instance_path) / "uploads",
+        )
+    )
+
+    return send_from_directory(upload_dir, filename, as_attachment=False)
 
 @auth_bp.route("/archive")
 def archive():
