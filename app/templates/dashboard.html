@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <title>Dashboard - Automated School Ticketing System</title>
 
+        
 
         <!-- Loads the CSS file from Flask’s static folder -->
         <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
@@ -15,10 +16,7 @@
     </h2>
 
     <img src="{{ url_for('static', filename='images/university logo.png') }}" alt="University Logo" class="logo">
-</div>
-        <h2>
-            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
-        </h2>
+  </div>
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
         </form>
