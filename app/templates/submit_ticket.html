@@ -26,7 +26,7 @@
             {% endif %}
 
             <!-- Submit form to /tickets/new using POST -->
-            <form action="{{ url_for('auth.new_ticket') }}" method="POST">
+            <form action="{{ url_for('auth.new_ticket') }}" method="POST" enctype="multipart/form-data">
                 <label for="title">Title:</label>
                 <input
                     type="text"
@@ -54,10 +54,9 @@
                 <br />
                 <label for="attachment">Attachment (optional):</label>
                 <input
-                    type="text"
+                    type="file"
                     id="attachment"
                     name="attachment"
-                    placeholder="File name or link"
                 />
                 <br />
                 <button type="submit" id="login-button">Create Ticket</button>

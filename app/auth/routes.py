@@ -1,8 +1,11 @@
 # URL routes
 # Main request flow for login, dashboard display, ticket submit, and ticket update
 
+from pathlib import Path
+
+from flask import Blueprint, current_app, redirect, render_template, request, session, url_for
 from werkzeug.security import generate_password_hash
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from werkzeug.utils import secure_filename
 import app.auth.service
 import app.database
 import app.notifications
@@ -11,6 +14,19 @@ import app.tickets
 # Create a blueprint named "auth"
 # The name is used for URL building (url_for("auth.login"))
 auth_bp = Blueprint("auth", __name__)
+
+# File types allowed for ticket attachments
+ALLOWED_ATTACHMENT_EXTENSIONS = {"gif", "jpeg", "jpg", "pdf", "png", "txt"}
+
+
+def is_allowed_attachment(filename):
+    #Check if the uploaded attachment has an allowed file extension
+
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_ATTACHMENT_EXTENSIONS
+    )
+
 
 # Login entry page
 # Sends users to the university sign-in form
@@ -243,23 +259,52 @@ def new_ticket():
         title = request.form.get("title", "").strip()
         category = request.form.get("category", "").strip()
         description = request.form.get("description", "").strip()
-        attachment = request.form.get("attachment", "").strip()
+
+        # File uploads are stored in request.files instead of request.form
+        attachment_file = request.files.get("attachment")
+        attachment_filename = None
 
         if not title or not category or not description:
             # Basic required-field check before DB insert
             error = "Title, category, and description are required."
-        else:
+        elif attachment_file and attachment_file.filename:
+            # Clean the uploaded filename before saving it on the server
+            attachment_filename = secure_filename(attachment_file.filename)
+            if not attachment_filename or not is_allowed_attachment(attachment_filename):
+                error = "Attachment must be a PNG, JPG, GIF, PDF, or TXT file."
+        
+        if error is None:
             # Save new ticket and link it to the current session user when available
+            # Attachment is first saved as None because we need the ticket ID to name it
             new_id = app.database.save_ticket(
                 {
                     "title": title,
                     "category": category,
                     "description": description,
-                    "attachment": attachment or None,
+                    "attachment": None,
                     "requester_account_id": session.get("user_account_id"),
                     "status": "Pending",
                 }
             )
+
+            if attachment_file and attachment_file.filename:
+                # Decides where the file should be saved
+                upload_dir = Path(
+                    current_app.config.get(
+                        "UPLOAD_FOLDER",
+                        Path(current_app.instance_path) / "uploads",
+                    )
+                )
+                # Creates the uploads folder if it does not already exist
+                upload_dir.mkdir(parents=True, exist_ok=True)
+
+                # Creates a safer saved filename using the ticket ID
+                saved_name = f"ticket_{new_id}_{attachment_filename}"
+                saved_path = upload_dir / saved_name
+                attachment_file.save(saved_path)
+                attachment_ref = f"uploads/{saved_name}"
+                # Store only the attachment reference in SQLite
+                app.database.update_ticket_attachment(new_id, attachment_ref)
 
             requester_email = session.get("user_email")
             if requester_email:
