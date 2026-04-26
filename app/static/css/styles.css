@@ -18,13 +18,13 @@ body {
 
 .header {
     text-align: center;
-    padding: 20px 0;
+    padding: 30px 0;
 }
 
 .logo {
     display: block;
     margin: 0 auto 10px auto;
-    height: 90px;
+    height: 180px;
     object-fit: contain;
 }
 
@@ -44,7 +44,9 @@ body {
 }
 
 .control-panel button {
-    width: 140px;
+    width: 120px
+    padding: 5px 10px;
+    font-size: 0.8rem;
 }
 
 
