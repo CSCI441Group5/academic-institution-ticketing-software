@@ -13,10 +13,12 @@ button {
     background-color: var(--primary);
     color: white;
     border: none;
-    padding: 8px 14px;
+    padding: 10px 18px;        /* more internal space */
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.95rem;
+
+    margin: 5px 8px 5px 0;     /* spacing between buttons */
 }
 
 button:hover {
@@ -33,13 +35,24 @@ button:hover {
 
 h1, h2 {
     color: var(--primary);
-    margin-left: 10px;
 }
 
 hr {
     border: none;
     border-top: 1px solid var(--border);
     margin: 20px 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.logo {
+    height: 70px;
+    object-fit: contain;
 }
 
 p {
@@ -91,10 +104,10 @@ p {
     --bg: #f4f6f9;
     --text: #1f2937;
 
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
+    --primary: #1f3c88;        /* updated */
+    --primary-hover: #162d66;  /* updated */
 
-    --accent: #10b981;
+    --accent: #f4a300;        /* matches the gold in logo */
     --card-bg: #ffffff;
     --border: #e5e7eb;
 
