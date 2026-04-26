@@ -1,148 +1,107 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Staff Dashboard - Automated School Ticketing System</title>
-        <h2>Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }}) ({{session.get("user_account_id") }})</h2>
+<head>
+    <meta charset="UTF-8" />
+    <title>Staff Dashboard - Automated School Ticketing System</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/university logo.png') }}" class="logo">
+
+        <h2>
+            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
+        </h2>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <button id="theme-toggle">Toggle Theme</button>
+        <button id="text-bigger">A+</button>
+        <button id="text-reset">A</button>
+        <button id="text-smaller">A-</button>
+
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
         </form>
+    </div>
 
-        <!-- Light/Dark Theme Toggle Button-->
-        <button id="theme-toggle">Toggle Theme</button>
+    <script src="{{url_for('static', filename='js/theme.js')}}"></script>
 
-        <!-- Text font size toggle buttons -->
+    <h1>All Tickets</h1>
+
+    <!-- Navigation -->
+    <div class="button-group">
+        <a href="{{ url_for('auth.archive') }}">
+            <button type="button">View Archives</button>
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <form method="get" id="filters">
+        <p><strong>Filter By:</strong></p>
+
         <div>
-           <button id="text-smaller">A-</button>
-           <button id="text-reset">A</button>
-           <button id="text-bigger">A+</button>
+            <label>Status</label>
+            <select name="status_filter">
+                <option value="">All</option>
+                <option value="Open" {% if status_filter == "Open" %}selected{% endif %}>Open</option>
+                <option value="In Progress" {% if status_filter == "In Progress" %}selected{% endif %}>In Progress</option>
+                <option value="Resolved" {% if status_filter == "Resolved" %}selected{% endif %}>Resolved</option>
+                <option value="Closed" {% if status_filter == "Closed" %}selected{% endif %}>Closed</option>
+            </select>
         </div>
 
-        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+        <div>
+            <label>Category</label>
+            <select name="category_filter">
+                <option value="">All</option>
+                <option value="IT" {% if category_filter == "IT" %}selected{% endif %}>IT</option>
+                <option value="Facilities" {% if category_filter == "Facilities" %}selected{% endif %}>Facilities</option>
+                <option value="Academic Support" {% if category_filter == "Academic Support" %}selected{% endif %}>Academic Support</option>
+            </select>
+        </div>
 
-        <!-- Loads the CSS file from Flask’s static folder -->
-         <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
-    </head>
-    <body>
-        <h1>User Tickets</h1>
-        <p>
-            <a href="{{ url_for('auth.archive') }}">
-                <button type="button">Go To Archives</button>
-            </a>
-        </p>
-        <form method="get" id="filters">
-            <p>Filter By:</p>
-            <div>
-                <label>Status:</label>
-                <select name="status_filter" id="status_filter">
-                    <option value="">All</option>
-                    <option value="Pending" {% if status_filter == "Pending"%}selected {%endif%}>Pending</option>
-                    <option value="In Progress"{% if status_filter == "In Progress"%}selected {%endif%}>In Progress</option>
-                    <option value="Resolved"{% if status_filter == "Resolved"%}selected {%endif%}>Resolved</option>
-                    <option value="Closed"{% if status_filter == "Closed"%}selected {%endif%}>Closed</option>
-                </select>
-            </div>
+        <div>
+            <p>Date:</p>
 
-            <div>
-                <label>Category:</label>
-                <select name="category_filter" id="category_filter">
-                    <option value="">All</option>
-                    <option value="IT"{% if category_filter == "IT"%}selected {%endif%}>IT</option>
-                    <option value="Facilities"{% if category_filter == "Facilities"%}selected {%endif%}>Facilities</option>
-                    <option value="Academic Support"{% if category_filter == "Academic Support"%}selected {%endif%}>Academic Support</option>
-                </select>
-            </div>
+            <label>After:</label>
+            <input type="date" name="date_after" value="{{ date_after }}">
 
-            <div>
-                <p>Date:</p>
-                <label>After:</label>
-                <input type="date" id="date_after" name="date_after" value=
-                {%if date_after is regex('\\d{4}-\\d{2}-\\d{2}$') %}
-                    {{date_after}}
-                {%endif%}>
+            <label>Before:</label>
+            <input type="date" name="date_before" value="{{ date_before }}">
+        </div>
 
-                <label>Before:</label>
-                <input type="date" id="date_before" name="date_before" value=
-                {%if date_before is regex('\\d{4}-\\d{2}-\\d{2}$') %}
-                    {{date_before}}
-                {%endif%}>
-            </div>
-            <button type="submit">Filter</button>
-        </p>
-        </form>
+        <button type="submit">Filter</button>
+    </form>
 
-        <!-- If tickets exist, render each one -->
-        {% if tickets %} 
-            {% for ticket in tickets %}
-                    <hr />
-                    <!-- Edit Mode -->
-                {% if request.args.get("edit") == ticket["id"]|string %}
-                    <form method="POST", action = "/tickets/{{ticket['id']}}/update">
-                        {% if session.get("user_role") == "staff" %}
-                            <input type="hidden" name="claimed_by" value='{{ticket["claimed_by"]}}'>
-                        {%endif%}
-                        <div>
-                            <p>Ticket ID: {{ ticket["id"] }}</p>
-                            <p>Submission Date: {{ ticket["created_at"] }}</p>
-                        </div>
-                        <div>
-                            <label>Status:</label>
-                            <select type="select" name="status">
-                                <option value="Pending" {% if ticket['status'] == "Pending"%}selected {%endif%}>Pending</option>
-                                <option value="In Progress"{% if ticket['status'] == "In Progress"%}selected {%endif%}>In Progress</option>
-                                <option value="Resolved"{% if ticket['status'] == "Resolved"%}selected {%endif%}>Resolved</option>
-                                <option value="Closed"{% if ticket['status'] == "Closed"%}selected {%endif%}>Closed</option>
-                            </select>
-                        </div>
-                        <div>
-                            <p>Category: {{ ticket["category"] }}</p>
-                        </div>
-                        <div>
-                            <label>Description: {{ticket['description']}}</label>
-                        </div>
-                        <div>
-                            <!-- If user role is staff, just show who currently owns this ticket -->
-                            <p>Claimed By: {%if session.get("user_role") == "staff"%} {{ticket["claimed_by"]}} {%endif%}</p>
+    <!-- Tickets -->
+    {% if tickets %}
+        {% for ticket in tickets %}
+            <hr />
+            <p><strong>{{ ticket["title"] }}</strong></p>
+            <p>Ticket ID: {{ ticket["id"] }}</p>
+            <p>Submission Date: {{ ticket["created_at"] }}</p>
+            <p>Status: {{ ticket["status"] }}</p>
+            <p>Category: {{ ticket["category"] }}</p>
+            <p>Description: {{ ticket["description"] }}</p>
 
-                            <!-- If user role is a manager, allow editing of ticket owner -->
-                            {%if session.get("user_role") == "manager"%}
-                            <select type="select" name="claimed_by">
-                                {%for staff_member in staff %}
-                                    <option value="{{staff_member['full_name']}}" 
-                                    {%if ticket["claimed_by"]==staff_member["full_name"]%}selected {%endif%}>
-                                    {{staff_member['full_name']}}</option>
-                                {%endfor%}
-                                <option value=""
-                                {%if ticket['claimed_by']==''%}selected {%endif%}>None</option>
-                            </select>
-                            {%endif%}
-                        </div>
-                        <button type="submit">Save</button>
-                    </form>
-                {% else %}
-                    <!--View Mode-->
-                    <p>Ticket ID: {{ ticket["id"] }}</p>
-                    <p>Submission Date: {{ ticket["created_at"] }}</p>
-                    <p>Status: {{ ticket["status"] }}</p>
-                    <p>Category: {{ ticket["category"] }}</p>
-                    <p>Description: {{ ticket["description"] }}</p>
-                    <p>Claimed By: {{ticket["claimed_by"]}}</p>
-                    {%if session.get("user_full_name") == ticket["claimed_by"] or session.get("user_role") == "manager"%}
-                    <a href="/staff_dashboard?edit={{ticket['id']}}">
-                        <button onclick="location='?edit={{ ticket.id }}'">Edit</button>
-                    </a>
-                    {%elif ticket["claimed_by"] == ""%}
-                        <form method="POST" action="/tickets/{{ticket['id']}}/claim">
-                            <input type="hidden" name="user_name" value="{{session.get('user_full_name')}}">
-                            <button type="submit">Claim</button>
-                        </form>
-                    {%endif%}
-                {% endif %}
-            {% endfor %} 
+            {% if ticket["status"] != "Closed" %}
+                <a href="?edit={{ ticket['id'] }}">
+                    <button type="button">Edit</button>
+                </a>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>No tickets found.</p>
+    {% endif %}
 
-        {% else %}
-            <!-- Shown when no tickets have been submitted yet -->
-            <p>No tickets submitted yet.</p>
-        {% endif %}
-    </body>
+</div>
+</body>
 </html>

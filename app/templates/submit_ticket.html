@@ -1,32 +1,59 @@
-<!-- Base html file for ticket submission UI -->
-
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Submit Ticket - Automated School Ticketing System</title>
-        <!-- Loads the CSS file from Flask’s static folder -->
+
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='css/styles.css') }}"
         />
-        
     </head>
+
     <body>
-        <section>
+        <div class="page-container">
+            <!-- Header -->
+            <div class="header">
+                <img
+                    src="{{ url_for('static', filename='images/university logo.png') }}"
+                    class="logo"
+                />
+
+                <h2>
+                    Signed in as: {{ session.get("user_full_name") }}
+                    ({{session.get("user_role") }})
+                </h2>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <button id="theme-toggle">Toggle Theme</button>
+                <button id="text-bigger">A+</button>
+                <button id="text-reset">A</button>
+                <button id="text-smaller">A-</button>
+
+                <form action="{{ url_for('auth.logout') }}" method="POST">
+                    <button type="submit">Sign Out</button>
+                </form>
+            </div>
+
+            <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+
             <h1>Submit Ticket</h1>
 
             {% if success %}
-            <!-- Show a simple confirmation after successful insert -->
             <p>Ticket created successfully (ID: {{ ticket_id }}).</p>
             {% endif %} {% if error %}
-            <!-- Show required-field validation message -->
             <p>{{ error }}</p>
             {% endif %}
 
-            <!-- Submit form to /tickets/new using POST -->
-            <form action="{{ url_for('auth.new_ticket') }}" method="POST" enctype="multipart/form-data">
+            <!-- Form -->
+            <form
+                action="{{ url_for('auth.new_ticket') }}"
+                method="POST"
+                enctype="multipart/form-data"
+            >
                 <label for="title">Title:</label>
                 <input
                     type="text"
@@ -35,7 +62,8 @@
                     placeholder="Brief summary of the issue"
                     required
                 />
-                <br />
+                <br /><br />
+
                 <label for="category">Category:</label>
                 <select id="category" name="category" required>
                     <option value="">Select a category</option>
@@ -43,7 +71,8 @@
                     <option value="Facilities">Facilities</option>
                     <option value="Academic Support">Academic Support</option>
                 </select>
-                <br />
+                <br /><br />
+
                 <label for="description">Description:</label>
                 <textarea
                     id="description"
@@ -51,21 +80,20 @@
                     rows="5"
                     required
                 ></textarea>
-                <br />
+                <br /><br />
+
                 <label for="attachment">Attachment (optional):</label>
-                <input
-                    type="file"
-                    id="attachment"
-                    name="attachment"
-                />
-                <br />
-                <button type="submit" id="login-button">Create Ticket</button>
+                <input type="file" id="attachment" name="attachment" />
+                <br /><br />
+
+                <button type="submit">Create Ticket</button>
             </form>
 
             <p>
-                <a href="{{ url_for('auth.dashboard') }}">Back to Dashboard</a>
+                <a href="{{ url_for('auth.dashboard') }}">
+                    <button type="button">Back to Dashboard</button>
+                </a>
             </p>
-        </section>
-        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+        </div>
     </body>
 </html>

@@ -1,77 +1,84 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Archived Tickets - Automated School Ticketing System</title>
+<head>
+    <meta charset="UTF-8" />
+    <title>Archived Tickets - Automated School Ticketing System</title>
 
-       
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
 
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='styles.css') }}"
-        />
-       
-    </head>
-    <body>
+<body>
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/university logo.png') }}" class="logo">
+
         <h2>
-            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }}) ({{session.get("user_account_id") }})
+            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
         </h2>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <button id="theme-toggle">Toggle Theme</button>
+        <button id="text-bigger">A+</button>
+        <button id="text-reset">A</button>
+        <button id="text-smaller">A-</button>
+
         <form action="{{ url_for('auth.logout') }}" method="POST">
             <button type="submit">Sign Out</button>
         </form>
+    </div>
 
-         <!-- Light/Dark Theme Toggle Button-->
-        <button id="theme-toggle">Toggle Theme</button>
+    <script src="{{url_for('static', filename='js/theme.js')}}"></script>
 
-        <!-- Text font size toggle buttons -->
+    <h1>Archived Tickets</h1>
+
+    <div class="button-group">
+        {% if session.get("user_role") in ["staff", "manager"] %}
+        <a href="{{ url_for('auth.staff_dashboard') }}">
+            <button type="button">Back To Dashboard</button>
+        </a>
+        {% else %}
+        <a href="{{ url_for('auth.dashboard') }}">
+            <button type="button">Back To Dashboard</button>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Filters -->
+    <form method="get" id="filters">
+        <p><strong>Filter By:</strong></p>
+
         <div>
-           <button id="text-smaller">A-</button>
-           <button id="text-reset">A</button>
-           <button id="text-bigger">A+</button>
+            <p>Date:</p>
+
+            <label>After:</label>
+            <input type="date" id="date_after" name="date_after" value="{{date_after}}">
+
+            <label>Before:</label>
+            <input type="date" id="date_before" name="date_before" value="{{date_before}}">
         </div>
 
-        <script src="{{url_for('static', filename='js/theme.js')}}"></script>
+        <button type="submit">Filter</button>
+    </form>
 
-        <h1>Archived Tickets</h1>
-        <p>
-            {% if session.get("user_role") in ["staff", "manager"] %}
-            <a href="{{ url_for('auth.staff_dashboard') }}">
-                <button type="button">Back To Dashboard</button>
-            </a>
-            {% else %}
-            <a href="{{ url_for('auth.dashboard') }}">
-                <button type="button">Back To Dashboard</button>
-            </a>
-            {% endif %}
-        </p>
+    <!-- Tickets -->
+    {% if tickets %}
+        {% for ticket in tickets %}
+            <hr />
+            <p><strong>{{ ticket["title"] }}</strong></p>
+            <p>Ticket ID: {{ ticket["id"] }}</p>
+            <p>Submission Date: {{ ticket["created_at"] }}</p>
+            <p>Status: {{ ticket["status"] }}</p>
+            <p>Category: {{ ticket["category"] }}</p>
+            <p>Description: {{ ticket["description"] }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No archived tickets found.</p>
+    {% endif %}
 
-        <form method="get" id="filters">
-            <p>Filter By:</p>
-
-            <div>
-                <p>Date:</p>
-                <label>After:</label>
-                <input type="date" id="date_after", name="date_after", value="{{date_after}}">
-
-                <label>Before:</label>
-                <input type="date" id="date_before", name="date_before", value="{{date_before}}">
-            </div>
-            <button type="submit">Filter</button>
-        </p>
-        </form>
-
-        {% if tickets %}
-            {% for ticket in tickets %}
-                <hr />
-                <p><strong>{{ ticket["title"] }}</strong></p>
-                <p>Ticket ID: {{ ticket["id"] }}</p>
-                <p>Submission Date: {{ ticket["created_at"] }}</p>
-                <p>Status: {{ ticket["status"] }}</p>
-                <p>Category: {{ ticket["category"] }}</p>
-                <p>Description: {{ ticket["description"] }}</p>
-            {% endfor %}
-        {% else %}
-            <p>No archived tickets found.</p>
-        {% endif %}
-    </body>
+</div>
+</body>
 </html>

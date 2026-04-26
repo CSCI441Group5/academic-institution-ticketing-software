@@ -1,69 +1,139 @@
-/* Styles for the dashboard page */
-
+/* Base Page */
 body {
     margin: 0;
     min-height: 100vh;
-    place-items: left;
-
     background: var(--bg);
     color: var(--text);
     font-size: var(--font-size);
+    font-family: Arial, sans-serif;
 }
 
-.login-menu {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 50%;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    font-family: sans-serif;
-    text-align: left;
+/* Page Padding */
+.page-container {
+    padding: 80px 40px 20px 40px; /* extra top space for control panel */
 }
 
-#login-header {
+
+/* ================= HEADER ================= */
+
+.header {
     text-align: center;
-    color: #333;
-    font-size: 24px;
-    margin-bottom: 20px;
+    padding: 30px 0;
 }
 
-.login-form {
+.logo {
+    display: block;
+    margin: 0 auto 10px auto;
+    height: 180px;
+    object-fit: contain;
+}
+
+
+/* ================= CONTROL PANEL ================= */
+
+.control-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
     display: flex;
     flex-direction: column;
+    gap: 10px;
 }
 
-#login-button {
-    display: inline-block;
-    background-color: #4caf50;
+.control-panel button {
+    width: 120px
+    padding: 5px 10px;
+    font-size: 0.8rem;
+}
+
+
+/* ================= BUTTONS ================= */
+
+button {
+    background-color: var(--primary);
     color: white;
-    padding: 10px 15px;
     border: none;
-    border-radius: 5px;
+    padding: 10px 18px;
+    border-radius: 6px;
     cursor: pointer;
-    min-width: 260px;
-    text-decoration: none;
+    font-size: 0.95rem;
+    margin: 5px 8px 5px 0;
 }
 
-#login-button:hover {
-    background-color: #45a049;
+button:hover {
+    background-color: var(--primary-hover);
 }
 
-:root{
-    --bg: #ffffff;
-    --text: #000000;
-    --primary: #0066ff;
+
+/* ================= GROUPS ================= */
+
+.button-group {
+    margin: 10px 0;
+}
+
+
+/* ================= FILTER ================= */
+
+#filters {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+
+
+/* ================= TEXT ================= */
+
+h1, h2 {
+    color: var(--primary);
+}
+
+p {
+    margin: 5px 10px;
+}
+
+
+/* ================= DIVIDERS ================= */
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}
+
+
+/* ================= THEME ================= */
+
+:root {
+    --bg: #f4f6f9;
+    --text: #1f2937;
+
+    --primary: #1f3c88;
+    --primary-hover: #162d66;
+
+    --accent: #f4a300;
+    --card-bg: #ffffff;
+    --border: #e5e7eb;
 
     --font-size: 16px;
 }
 
-[data-theme="dark"]{
+[data-theme="dark"] {
     --bg: #121212;
-    --text: #e0e0e0;
+    --text: #e5e7eb;
+
     --primary: #4da3ff;
+    --primary-hover: #1e90ff;
+
+    --accent: #34d399;
+    --card-bg: #1e1e1e;
+    --border: #333;
 }
+
+
+/* ================= UTIL ================= */
 
 .disabled {
     opacity: 0.5;
