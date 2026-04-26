@@ -13,7 +13,6 @@ body {
     padding: 80px 40px 20px 40px; /* extra top space for control panel */
 }
 
-
 /* ================= HEADER ================= */
 
 .header {
@@ -28,7 +27,6 @@ body {
     object-fit: contain;
 }
 
-
 /* ================= CONTROL PANEL ================= */
 
 .control-panel {
@@ -42,11 +40,10 @@ body {
 }
 
 .control-panel button {
-    width: 120px
+    width: 120px;
     padding: 5px 10px;
     font-size: 0.8rem;
 }
-
 
 /* ================= BUTTONS ================= */
 
@@ -65,13 +62,11 @@ button:hover {
     background-color: var(--primary-hover);
 }
 
-
 /* ================= GROUPS ================= */
 
 .button-group {
     margin: 10px 0;
 }
-
 
 /* ================= FILTER ================= */
 
@@ -83,17 +78,16 @@ button:hover {
     border-radius: 8px;
 }
 
-
 /* ================= TEXT ================= */
 
-h1, h2 {
+h1,
+h2 {
     color: var(--primary);
 }
 
 p {
     margin: 5px 10px;
 }
-
 
 /* ================= DIVIDERS ================= */
 
@@ -102,7 +96,6 @@ hr {
     border-top: 1px solid var(--border);
     margin: 20px 0;
 }
-
 
 /* ================= THEME ================= */
 
@@ -132,10 +125,23 @@ hr {
     --border: #333;
 }
 
-
 /* ================= UTIL ================= */
 
 .disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* ================= ATTACHMENTS ================= */
+
+.attachment-preview {
+    display: none;
+    margin: 10px;
+}
+
+.attachment-preview img {
+    max-width: 400px;
+    max-height: 300px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
 }

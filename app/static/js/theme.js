@@ -79,3 +79,13 @@ if(reset){
         localStorage.setItem("font-size", "16px");
     });
 }
+
+function toggleAttachment(ticketId){
+    const attachment = document.getElementById("attachment-" + ticketId);
+
+    if(attachment.style.display === "block"){
+        attachment.style.display = "none";
+    } else {
+        attachment.style.display = "block";
+    }
+}

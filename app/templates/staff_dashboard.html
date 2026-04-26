@@ -91,6 +91,12 @@
             <p>Status: {{ ticket["status"] }}</p>
             <p>Category: {{ ticket["category"] }}</p>
             <p>Description: {{ ticket["description"] }}</p>
+            {% if ticket["attachment"] %}
+                <button type="button" onclick="toggleAttachment('{{ ticket.id }}')">View Attachment</button>
+                <div id="attachment-{{ ticket.id }}" class="attachment-preview">
+                    <img src="{{ url_for('auth.view_attachment', ticket_id=ticket.id) }}" alt="Ticket attachment">
+                </div>
+            {% endif %}
 
             {% if ticket["status"] != "Closed" %}
                 <a href="?edit={{ ticket['id'] }}">
