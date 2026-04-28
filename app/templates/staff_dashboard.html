@@ -84,24 +84,67 @@
     <!-- Tickets -->
     {% if tickets %}
         {% for ticket in tickets %}
-            <hr />
-            <p><strong>{{ ticket["title"] }}</strong></p>
-            <p>Ticket ID: {{ ticket["id"] }}</p>
-            <p>Submission Date: {{ ticket["created_at"] }}</p>
-            <p>Status: {{ ticket["status"] }}</p>
-            <p>Category: {{ ticket["category"] }}</p>
-            <p>Description: {{ ticket["description"] }}</p>
-            {% if ticket["attachment"] %}
-                <button type="button" onclick="toggleAttachment('{{ ticket.id }}')">View Attachment</button>
-                <div id="attachment-{{ ticket.id }}" class="attachment-preview">
-                    <img src="{{ url_for('auth.view_attachment', ticket_id=ticket.id) }}" alt="Ticket attachment">
-                </div>
-            {% endif %}
+            {% if request.args.get("edit") == ticket["id"]|string %}
+                <!-- If Editing a ticket -->
+                <form method="POST" action="/tickets/{{ticket['id']}}/update">
+                    <p><strong>{{ ticket["title"] }}</strong></p>
 
-            {% if ticket["status"] != "Closed" %}
-                <a href="?edit={{ ticket['id'] }}">
-                    <button type="button">Edit</button>
-                </a>
+                    <div>
+                        <p>Ticket ID: {{ ticket.id }}</p>
+                        <p>Submission Date: {{ ticket.created_at }}</p>
+                    </div>
+
+                    <div>
+                        <label>Status:</label>
+                        <select name="status">
+                            <option value="Open" {% if ticket['status'] == 'Open' %}selected{%endif%}>Open</option>
+                            <option value="Pending" {% if ticket['status'] == 'Pending' %}selected{%endif%}>Pending</option>
+                            <option value="Resolved" {% if ticket['status'] == 'Resolved' %}selected{%endif%}>Resolved</option>
+                            <option value="Closed" {% if ticket['status'] == 'Closed' %}selected{%endif%}>Closed</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <p>Category: {{ ticket.category }}</p>
+                    </div>
+
+                    <div>
+                        <p>Description: {{ticket["description"]}}</p>
+                    </div>
+
+                    <div>
+                        <p>Claimed By: {{session.get("user_full_name")}}</p>
+                    </div>
+
+                    <input type="hidden" value="{{session.get('user_full_name')}}" id="claimed_by" name="claimed_by">
+
+                    <button type="submit">Save</button>
+                </form>
+            {%else%}
+                <hr />
+                <p><strong>{{ ticket["title"] }}</strong></p>
+                <p>Ticket ID: {{ ticket["id"] }}</p>
+                <p>Submission Date: {{ ticket["created_at"] }}</p>
+                <p>Status: {{ ticket["status"] }}</p>
+                <p>Category: {{ ticket["category"] }}</p>
+                <p>Description: {{ ticket["description"] }}</p>
+                {% if ticket["claimed_by"] != "" %}
+                    <p>Claimed By: {{ticket["claimed_by"]}}</p>
+                {%else%}
+                    <p>Unclaimed</p>
+                {%endif%}
+                {% if ticket["attachment"] %}
+                    <button type="button" onclick="toggleAttachment('{{ ticket.id }}')">View Attachment</button>
+                    <div id="attachment-{{ ticket.id }}" class="attachment-preview">
+                        <img src="{{ url_for('auth.view_attachment', ticket_id=ticket.id) }}" alt="Ticket attachment">
+                    </div>
+                {% endif %}
+                
+                {% if ticket["status"] != "Closed" %}
+                    <a href="?edit={{ ticket['id'] }}">
+                        <button type="button">Edit</button>
+                    </a>
+                {%endif%}
             {% endif %}
         {% endfor %}
     {% else %}
