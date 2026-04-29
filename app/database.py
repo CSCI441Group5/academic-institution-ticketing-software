@@ -192,6 +192,20 @@ def get_university_account_by_id(account_id):
     finally:
         connection.close()
 
+def get_staff_accounts_by_department(department):
+    connection = connect_db()
+    query = """
+                SELECT full_name
+                FROM UniversityAccount
+                WHERE role == "staff"
+                AND department = ?
+            """
+
+    params = (department,)
+    accounts = connection.execute(query, params).fetchall()
+    connection.close()
+
+    return accounts
 
 def save_university_account(account_data):
     """Save university account if it does not already exist."""

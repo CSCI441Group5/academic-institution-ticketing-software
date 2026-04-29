@@ -114,7 +114,23 @@
                     </div>
 
                     <div>
-                        <p>Claimed By: {{session.get("user_full_name")}}</p>
+                        <!--Only managers can edit which staff owns which ticket-->
+                        {% if session.get("user_role") == "manager" %}
+                        <label>Claimed By:</label>
+                        {% if staff %}
+                        <select name="claimed_by" id="claimed_by">
+                            <option value="" {% if ticket['claimed_by'] == '' %} selected {% endif %}>None</option>
+                            {% for staff_member in staff %}
+                            <option value="{{staff_member['full_name']}}" {% if ticket['claimed_by'] == staff_member['full_name'] %} selected {% endif %}>{{staff_member['full_name']}}</option>
+                            {% endfor %}
+                        </select>
+                        {% else %}
+                        <p>No staff available</p>
+                        {% endif %}
+                        {% else %}
+                        <p>User Role: {{ session.get("user_role") }}</p>
+                        <p>Claimed By: {{ticket['claimed_by']}}</p>
+                        {%endif%}
                     </div>
 
                     <input type="hidden" value="{{session.get('user_full_name')}}" id="claimed_by" name="claimed_by">
@@ -135,8 +151,12 @@
                     <p>Claimed By: {{ticket["claimed_by"]}}</p>
                 {%else%}
                     <p>Unclaimed</p>
+                    <form method = "POST" action = "/tickets/{{ticket['id']}}/claim">
+                        <button type="submit">Claim</button>
+                        <input type="hidden" value="{{ session.get('user_full_name') }}" name="user_name" id="user_name">
+                    </form>
                 {%endif%}
-                {% if ticket["status"] != "Closed" %}
+                {% if ticket["status"] != "Closed" and ticket["claimed_by"] == session.get(user_full_name) or session.get("user_role") == "manager"%}
                     <a href="?edit={{ ticket['id'] }}">
                         <button type="button">Edit</button>
                     </a>

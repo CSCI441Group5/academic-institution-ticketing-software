@@ -103,7 +103,7 @@ def staff_dashboard():
         if edit_ticket_id:
             ticket = app.database.get_ticket(edit_ticket_id)
             department = ticket['category']
-            staff_names = get_staff_accounts(department)
+            staff_names = app.database.get_staff_accounts_by_department(department) or []
     
     # Staff only see their department. Managers see all departments.
     department = None
@@ -111,6 +111,7 @@ def staff_dashboard():
         department = session.get("department")
     session_data = get_ticket_data(department)
 
+    print(staff_names)
     return render_template("staff_dashboard.html", 
                            tickets=session_data[0],
                            status_filter=session_data[1],
@@ -171,23 +172,6 @@ def get_ticket_data(department = None):
         connection.close()
 
     return [filtered, status_filter, category_filter, date_before, date_after]
-
-# Not a route
-def get_staff_accounts(department):
-    connection = app.database.connect_db()
-    query = """
-                SELECT full_name
-                FROM UniversityAccount
-                WHERE role == "staff"
-                AND department = ?
-            """
-
-    params = (department,)
-    accounts = connection.execute(query, params).fetchall()
-
-    connection.close()
-
-    return accounts
 
 @auth_bp.get("/tickets/<int:ticket_id>/attachment")
 def view_attachment(ticket_id):
@@ -397,7 +381,7 @@ def create_new_account():
 def edit_ticket(ticket_id):
     ticket = app.database.get_ticket(ticket_id)
     department = ticket['category']
-    staff = get_staff_accounts(department)
+    staff = app.database.get_staff_accounts_by_department(department)
     return redirect(url_for("auth.staff_dashboard"))
 
 @auth_bp.route("/tickets/<int:ticket_id>/update", methods=["POST"])
