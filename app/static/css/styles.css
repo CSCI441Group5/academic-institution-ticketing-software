@@ -155,6 +155,7 @@ hr {
         }
 
         .ticket-highlight {
+            color: #000000;
             background-color: #fff3cd;
             border: 2px solid #ffc107;
             box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
