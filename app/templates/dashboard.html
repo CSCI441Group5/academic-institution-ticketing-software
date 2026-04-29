@@ -102,11 +102,11 @@
                     <img src="{{ url_for('auth.view_attachment', ticket_id=ticket.id) }}" alt="Ticket attachment">
                 </div>
             {% endif %}
-        {% endif %}
-    {% endfor %}
-{% else %}
-    <p>No tickets submitted yet.</p>
-{% endif %}
+        {% endfor %}
+    {% else %}
+        <p>No tickets submitted yet.</p>
+    {% endif %}
+}
 
 </div>
 </body>
