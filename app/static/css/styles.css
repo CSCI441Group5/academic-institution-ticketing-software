@@ -145,3 +145,26 @@ hr {
     border: 1px solid var(--border);
     border-radius: 6px;
 }
+
+/* ================= TICKETS ================= */
+
+.ticket-container {
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .ticket-highlight {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+            }
+        }

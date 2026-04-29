@@ -89,3 +89,25 @@ function toggleAttachment(ticketId){
         attachment.style.display = "block";
     }
 }
+
+
+// Scroll to and highlight the edited ticket on page load
+function highlightEditedTicket() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('edit');
+    
+    if (editId) {
+        const ticketElement = document.getElementById('ticket-' + editId);
+        if (ticketElement) {
+            // Scroll into view with smooth behavior
+            ticketElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Optional: Flash animation to draw attention
+            ticketElement.style.animation = 'none';
+            setTimeout(() => {
+                ticketElement.style.animation = 'pulse 0.6s ease-in-out 2';
+            }, 100);
+        }
+    }
+}
+document.addEventListener('DOMContentLoaded', highlightEditedTicket);

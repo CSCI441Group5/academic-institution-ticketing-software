@@ -86,6 +86,7 @@
         {% for ticket in tickets %}
             {% if request.args.get("edit") == ticket["id"]|string %}
                 <!-- If Editing a ticket -->
+                <div id="ticket-{{ ticket['id'] }}" class="ticket-container ticket-highlight">
                 <form method="POST" action="/tickets/{{ticket['id']}}/update">
                     <p><strong>{{ ticket["title"] }}</strong></p>
 
@@ -120,7 +121,9 @@
 
                     <button type="submit">Save</button>
                 </form>
+                </div>
             {%else%}
+                <div id="ticket-{{ ticket['id'] }}" class="ticket-container">
                 <hr />
                 <p><strong>{{ ticket["title"] }}</strong></p>
                 <p>Ticket ID: {{ ticket["id"] }}</p>
@@ -145,6 +148,7 @@
                         <button type="button">Edit</button>
                     </a>
                 {%endif%}
+                </div>
             {% endif %}
         {% endfor %}
     {% else %}
