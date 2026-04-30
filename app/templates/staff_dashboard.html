@@ -16,8 +16,7 @@
         <img src="{{ url_for('static', filename='images/university logo.png') }}" class="logo">
 
         <h2>
-            Signed in as: {{ session.get("user_full_name") }} ({{session.get("user_role") }})
-        </h2>
+            Welcome, {{ session.get("user_full_name") }}!
     </div>
 
     <!-- Control Panel -->
